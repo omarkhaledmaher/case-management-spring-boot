@@ -1,0 +1,10 @@
+spring:
+  profiles:
+    default: dev
+  config:
+    import: "file:secrets.yaml"
+  application:
+    name: application
+logging:
+  level:
+    "[org.springframework.security]": TRACE
