@@ -1,0 +1,8 @@
+package com.example.common.exceptions;
+
+public class DuplicateUsernameException extends RuntimeException {
+    public DuplicateUsernameException(String message) {
+        super(message);
+    }
+
+}
