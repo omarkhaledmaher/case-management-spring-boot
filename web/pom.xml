@@ -14,7 +14,11 @@
 	<name>web</name>
 	<description>Demo project for Spring Boot</description>
 	<dependencies>
-
+		<dependency>
+			<groupId>com.example</groupId>
+			<artifactId>service</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 
 </project>
