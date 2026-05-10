@@ -8,6 +8,12 @@ services:
       - "3307:3306"
     volumes:
       - db:/data/var/lib/mysql
-
+  activemq:
+      image: apache/activemq-classic:latest
+      container_name: activemq
+      ports:
+        - "8161:8161"
+        - "61616:61616"
+      restart: always
 volumes:
   db:
