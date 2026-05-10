@@ -1,0 +1,39 @@
+package com.example.service.mapper;
+
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import com.example.common.dto.LoginDto;
+import com.example.common.dto.RoleResponseDto;
+import com.example.common.dto.UserRequestDto;
+import com.example.common.dto.UserResponseDto;
+import com.example.model.Role;
+import com.example.model.User;
+
+@Component
+public class UserMapper {
+    @Autowired
+    private RoleMapper roleMapper;
+
+    public UserResponseDto toDto(User user) {
+        return new UserResponseDto(user.getId(),
+                user.getUsername(),
+                user.getRoles().stream().map(roleMapper::toDto).map(RoleResponseDto::name).toList());
+    }
+
+    public User toUser(UserRequestDto dto, List<Role> roles) {
+        User user = new User();
+        user.setUsername(dto.username());
+        user.setPassword(dto.password());
+        user.setRoles(roles);
+        return user;
+    }
+
+    public User toUser(LoginDto dto, List<Role> roles) {
+        User user = new User();
+        user.setUsername(dto.username());
+        user.setPassword(dto.password());
+        user.setRoles(roles);
+        return user;
+    }
+}
