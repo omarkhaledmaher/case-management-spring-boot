@@ -5,6 +5,13 @@ spring:
     import: "file:secrets.yaml"
   application:
     name: application
+  jpa:
+    show-sql: true
+    properties:
+      dialect: org.hibernate.dialect.mysql.dialect
+      format-sql: true
+    hibernate:
+      ddl-auto: create
 logging:
   level:
     "[org.springframework.security]": TRACE
