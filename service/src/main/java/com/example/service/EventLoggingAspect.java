@@ -5,6 +5,7 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import com.example.common.dto.EventDto;
 import com.example.common.enums.DatabaseOperation;
@@ -30,9 +31,11 @@ public class EventLoggingAspect {
             return;
         }
 
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
         String entityName = joinPoint.getTarget().getClass().getSimpleName().replace("Service", "");
 
         jmsTemplate.convertAndSend("database.logging",
-                new EventDto(operation, entityName, methodName, result.toString()));
+                new EventDto(operation, entityName, methodName, username, result.toString()));
     }
 }

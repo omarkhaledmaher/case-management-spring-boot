@@ -13,8 +13,8 @@ public class EventMapper {
 
         StringBuilder sb = new StringBuilder();
         sb.append("Event logged: ").append(dto.operation()).append(" - ")
-                .append(dto.entityName()).append(" ").append(dto.methodName())
-                .append(" with response: ").append(dto.response());
+                .append(dto.entityName()).append(" ").append(dto.methodName()).append(" by user: ")
+                .append(dto.username()).append(" with response: ").append(dto.response());
 
         event.setDescription(sb.toString());
         return event;
