@@ -19,9 +19,12 @@ public class EventLoggingAspect {
     @Autowired
     private JmsTemplate jmsTemplate;
 
-    @AfterReturning(value = "@annotation(org.springframework.web.bind.annotation.PostMapping) || " +
+    @AfterReturning(
+            value = "(@annotation(org.springframework.web.bind.annotation.PostMapping) || " +
             "@annotation(org.springframework.web.bind.annotation.PutMapping) || " +
-            "@annotation(org.springframework.web.bind.annotation.DeleteMapping)", returning = "response")
+                    "@annotation(org.springframework.web.bind.annotation.DeleteMapping)) " +
+                    "&& !within(com.example.web.AuthController)",
+            returning = "response")
     public void logEvent(JoinPoint joinPoint, Object response) {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         java.lang.reflect.Method method = signature.getMethod();
