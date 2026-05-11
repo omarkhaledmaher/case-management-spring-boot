@@ -15,8 +15,8 @@ public class EventLoggingAspect {
     @Autowired
     private JmsTemplate jmsTemplate;
 
-    @AfterReturning(value = "execution(* com.example.service.*.*(..)) ", returning = "response")
-    public void logEvent(JoinPoint joinPoint, Object response) {
+    @AfterReturning(pointcut = "within(@org.springframework.stereotype.Service *)", returning = "result")
+    public void logEvent(JoinPoint joinPoint, Object result) {
         String methodName = joinPoint.getSignature().getName();
 
         DatabaseOperation operation;
@@ -33,6 +33,6 @@ public class EventLoggingAspect {
         String entityName = joinPoint.getTarget().getClass().getSimpleName().replace("Service", "");
 
         jmsTemplate.convertAndSend("database.logging",
-                new EventDto(operation, entityName, methodName, response.toString()));
+                new EventDto(operation, entityName, methodName, result.toString()));
     }
 }
