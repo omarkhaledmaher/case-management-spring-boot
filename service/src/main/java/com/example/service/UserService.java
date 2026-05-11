@@ -44,7 +44,7 @@ public class UserService {
         }
         String encodedPassword = passwordEncoder.encode(dto.password());
         List<Role> roles = roleRepository.findAllByNameIn(Arrays.asList("USER"));
-        User user = new User(null, dto.username(), encodedPassword, roles);
+        User user = mapper.toUser(dto, encodedPassword, roles);
         repository.save(user);
 
         return jwtUtils.generateJwtToken(user);
@@ -80,7 +80,7 @@ public class UserService {
         }
         String encodedPassword = passwordEncoder.encode(dto.password());
 
-        User user = new User(null, dto.username(), encodedPassword, roles);
+        User user = mapper.toUser(dto, encodedPassword, roles);
 
         return mapper.toDto(repository.save(user));
     }
