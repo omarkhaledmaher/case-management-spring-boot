@@ -12,6 +12,10 @@ spring:
       format-sql: true
     hibernate:
       ddl-auto: create
+  activemq:
+    broker-url: tcp://127.0.0.1:61616
+    user: ${mq.username}
+    password: ${mq.password}
 logging:
   level:
     "[org.springframework.security]": TRACE
