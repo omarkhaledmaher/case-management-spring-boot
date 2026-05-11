@@ -3,7 +3,7 @@ package com.example.event;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import com.example.common.events.DatabaseLoggingEvent;
+import com.example.common.dto.EventDto;
 import com.example.repository.EventRepository;
 import lombok.AllArgsConstructor;
 
@@ -15,8 +15,8 @@ public class EventConsumer {
 
     @Transactional
     @JmsListener(destination = "database.logging")
-    public void createEvent(DatabaseLoggingEvent databaseLoggingEvent) {
-        repository.save(mapper.toEvent(databaseLoggingEvent));
+    public void createEvent(EventDto dto) {
+        repository.save(mapper.toEvent(dto));
     }
 
 }

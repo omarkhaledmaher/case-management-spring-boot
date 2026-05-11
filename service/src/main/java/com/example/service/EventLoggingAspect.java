@@ -6,8 +6,8 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
+import com.example.common.dto.EventDto;
 import com.example.common.enums.DatabaseOperation;
-import com.example.common.events.DatabaseLoggingEvent;
 
 @Aspect
 @Component
@@ -33,6 +33,6 @@ public class EventLoggingAspect {
         String entityName = joinPoint.getTarget().getClass().getSimpleName().replace("Service", "");
 
         jmsTemplate.convertAndSend("database.logging",
-                new DatabaseLoggingEvent(operation, entityName, methodName, response.toString()));
+                new EventDto(operation, entityName, methodName, response.toString()));
     }
 }
