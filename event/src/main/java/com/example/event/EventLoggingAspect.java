@@ -5,7 +5,7 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +17,7 @@ import com.example.common.events.DatabaseLoggingEvent;
 @Component
 public class EventLoggingAspect {
     @Autowired
-    private ApplicationEventPublisher eventPublisher;
+    private JmsTemplate jmsTemplate;
 
     @AfterReturning(value = "@annotation(org.springframework.web.bind.annotation.PostMapping) || " +
             "@annotation(org.springframework.web.bind.annotation.PutMapping) || " +
@@ -26,20 +26,21 @@ public class EventLoggingAspect {
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         java.lang.reflect.Method method = signature.getMethod();
 
-        DatabaseOperation eventType;
+        DatabaseOperation operation;
         if (method.isAnnotationPresent(PostMapping.class)) {
-            eventType = DatabaseOperation.CREATED;
+            operation = DatabaseOperation.CREATED;
         } else if (method.isAnnotationPresent(PutMapping.class)) {
-            eventType = DatabaseOperation.UPDATED;
+            operation = DatabaseOperation.UPDATED;
         } else if (method.isAnnotationPresent(DeleteMapping.class)) {
-            eventType = DatabaseOperation.DELETED;
+            operation = DatabaseOperation.DELETED;
         } else {
-            eventType = DatabaseOperation.UNKNOWN;
+            operation = DatabaseOperation.UNKNOWN;
         }
 
         String entityName = joinPoint.getTarget().getClass().getSimpleName().replace("Controller", "");
         String methodName = joinPoint.getSignature().getName();
 
-        eventPublisher.publishEvent(new DatabaseLoggingEvent(eventType, entityName, methodName, response.toString()));
+        jmsTemplate.convertAndSend("database.logging",
+                new DatabaseLoggingEvent(operation, entityName, methodName, response.toString()));
     }
 }

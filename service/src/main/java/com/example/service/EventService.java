@@ -1,10 +1,9 @@
 package com.example.service;
 
 import java.util.List;
-import org.springframework.context.event.EventListener;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.common.events.DatabaseLoggingEvent;
@@ -31,13 +30,9 @@ public class EventService {
     }
 
     @Transactional
-    @EventListener
-    public Event createEvent(DatabaseLoggingEvent databaseLoggingEvent) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        Event createdEvent = eventRepository.save(mapper.toEvent(databaseLoggingEvent, username));
-        eventRepository.flush();
-        return createdEvent;
+    @JmsListener(destination = "database.logging")
+    public void createEvent(DatabaseLoggingEvent databaseLoggingEvent) {
+        eventRepository.save(mapper.toEvent(databaseLoggingEvent));
     }
 
 }

@@ -14,8 +14,7 @@ public class EventMapper {
         StringBuilder sb = new StringBuilder();
         sb.append("Event logged: ").append(databaseLoggingEvent.operation()).append(" - ")
                 .append(databaseLoggingEvent.entityName()).append(" ").append(databaseLoggingEvent.methodName())
-                .append(" by user: ").append(username).append(" with response: ")
-                .append(databaseLoggingEvent.response());
+                .append(" with response: ").append(databaseLoggingEvent.response());
 
         event.setDescription(sb.toString());
         return event;
