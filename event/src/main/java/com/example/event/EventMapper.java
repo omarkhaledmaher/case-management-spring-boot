@@ -1,4 +1,4 @@
-package com.example.service.mapper;
+package com.example.event;
 
 import org.springframework.stereotype.Component;
 import com.example.common.events.DatabaseLoggingEvent;

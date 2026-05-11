@@ -1,23 +1,18 @@
 package com.example.service;
 
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import com.example.common.events.DatabaseLoggingEvent;
 import com.example.common.exceptions.ResourceNotFoundException;
 import com.example.model.Event;
 import com.example.repository.EventRepository;
-import com.example.service.mapper.EventMapper;
-import lombok.AllArgsConstructor;
 
 @Service
-@AllArgsConstructor
 public class EventService {
-    private final EventRepository eventRepository;
-    private final EventMapper mapper;
+    @Autowired
+    private EventRepository eventRepository;
 
     public Event getEvent(Long id) {
         return eventRepository.findById(id)
@@ -28,11 +23,4 @@ public class EventService {
         return eventRepository
                 .findAll(PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort())).toList();
     }
-
-    @Transactional
-    @JmsListener(destination = "database.logging")
-    public void createEvent(DatabaseLoggingEvent databaseLoggingEvent) {
-        eventRepository.save(mapper.toEvent(databaseLoggingEvent));
-    }
-
 }

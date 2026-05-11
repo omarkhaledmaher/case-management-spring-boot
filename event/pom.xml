@@ -20,6 +20,12 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>com.example</groupId>
+			<artifactId>repository</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-aspectj</artifactId>
 		</dependency>
