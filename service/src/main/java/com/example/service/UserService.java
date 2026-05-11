@@ -17,12 +17,12 @@ import com.example.common.dto.UserRequestDto;
 import com.example.common.dto.UserResponseDto;
 import com.example.common.exceptions.DuplicateUsernameException;
 import com.example.common.exceptions.ResourceNotFoundException;
+import com.example.mapper.UserMapper;
 import com.example.model.Role;
 import com.example.model.User;
 import com.example.repository.RoleRepository;
 import com.example.repository.UserRepository;
 import com.example.security.JwtUtils;
-import com.example.service.mapper.UserMapper;
 import lombok.AllArgsConstructor;
 
 @Service

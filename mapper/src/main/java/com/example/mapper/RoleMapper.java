@@ -1,4 +1,4 @@
-package com.example.service.mapper;
+package com.example.mapper;
 
 import java.util.List;
 import org.springframework.stereotype.Component;

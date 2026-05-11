@@ -12,11 +12,11 @@ import com.example.common.dto.RoleRequestDto;
 import com.example.common.dto.RoleResponseDto;
 import com.example.common.exceptions.DuplicateRoleException;
 import com.example.common.exceptions.ResourceNotFoundException;
+import com.example.mapper.RoleMapper;
 import com.example.model.Privilege;
 import com.example.model.Role;
 import com.example.repository.PrivilegeRepository;
 import com.example.repository.RoleRepository;
-import com.example.service.mapper.RoleMapper;
 import lombok.AllArgsConstructor;
 
 @Service

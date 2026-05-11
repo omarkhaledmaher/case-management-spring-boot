@@ -1,4 +1,4 @@
-package com.example.event;
+package com.example.mapper;
 
 import org.springframework.stereotype.Component;
 import com.example.common.dto.EventDto;

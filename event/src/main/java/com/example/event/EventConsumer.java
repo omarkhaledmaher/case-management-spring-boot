@@ -4,6 +4,7 @@ import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.common.dto.EventDto;
+import com.example.mapper.EventMapper;
 import com.example.repository.EventRepository;
 import lombok.AllArgsConstructor;
 
