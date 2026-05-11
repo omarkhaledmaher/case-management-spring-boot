@@ -40,9 +40,7 @@ public class Privilege {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof Privilege))
             return false;
         Privilege other = (Privilege) obj;
         return Objects.equals(id, other.id);
