@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +32,7 @@ public class RoleService {
 
     public List<RoleResponseDto> getAllRoles(Pageable pageable) {
         return roleRepository
-                .findAll(PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort())).stream()
+                .findAll(pageable).stream()
                 .map(mapper::toDto).toList();
     }
 

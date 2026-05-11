@@ -2,7 +2,6 @@ package com.example.service;
 
 import java.util.Arrays;
 import java.util.List;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -64,7 +63,7 @@ public class UserService {
     }
 
     public List<UserResponseDto> getAllUsers(Pageable pageable) {
-        return repository.findAll(PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort()))
+        return repository.findAll(pageable).stream()
                 .map(mapper::toDto).toList();
     }
 
