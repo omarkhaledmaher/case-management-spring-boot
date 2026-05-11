@@ -1,5 +1,5 @@
 package com.example.common.enums;
 
-public enum EventType {
+public enum DatabaseOperation {
     CREATED, UPDATED, DELETED, UNKNOWN
 }

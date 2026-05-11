@@ -1,7 +1,7 @@
 package com.example.model;
 
 import java.util.Objects;
-import com.example.common.enums.EventType;
+import com.example.common.enums.DatabaseOperation;
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,11 +15,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class EventCode {
     private String entityName;
-    private EventType type;
+    private DatabaseOperation operation;
 
     @Override
     public int hashCode() {
-        return Objects.hash(entityName, type);
+        return Objects.hash(entityName, operation);
     }
 
     @Override
@@ -31,7 +31,7 @@ public class EventCode {
         if (getClass() != obj.getClass())
             return false;
         EventCode other = (EventCode) obj;
-        return Objects.equals(entityName, other.entityName) && type == other.type;
+        return Objects.equals(entityName, other.entityName) && operation == other.operation;
     }
 
 }

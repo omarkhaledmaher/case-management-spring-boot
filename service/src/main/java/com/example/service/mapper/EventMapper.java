@@ -7,12 +7,12 @@ import com.example.model.EventCode;
 
 @Component
 public class EventMapper {
-    public Event toEvent(DatabaseLoggingEvent databaseLoggingEvent, String username) {
+    public Event toEvent(DatabaseLoggingEvent databaseLoggingEvent) {
         Event event = new Event();
-        event.setCode(new EventCode(databaseLoggingEvent.entityName(), databaseLoggingEvent.eventType()));
+        event.setCode(new EventCode(databaseLoggingEvent.entityName(), databaseLoggingEvent.operation()));
 
         StringBuilder sb = new StringBuilder();
-        sb.append("Event logged: ").append(databaseLoggingEvent.eventType()).append(" - ")
+        sb.append("Event logged: ").append(databaseLoggingEvent.operation()).append(" - ")
                 .append(databaseLoggingEvent.entityName()).append(" ").append(databaseLoggingEvent.methodName())
                 .append(" by user: ").append(username).append(" with response: ")
                 .append(databaseLoggingEvent.response());
