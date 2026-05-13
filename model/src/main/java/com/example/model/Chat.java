@@ -3,7 +3,6 @@ package com.example.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,40 +10,36 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity(name = "users")
+@Entity
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class Chat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
-    private String username;
-
-    private String password;
+    @ManyToOne
+    @JoinColumn(name = "case_id")
+    private Case chatCase;
 
     @ManyToMany
     @JoinTable(
-            name = "users_roles",
-            joinColumns = @JoinColumn(
-                    name = "user_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(
-                    name = "role_id", referencedColumnName = "id"))
-    private List<Role> roles = new ArrayList<>();
+            name = "chat_participants",
+            joinColumns = @JoinColumn(name = "chat_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private List<User> participants = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "participants")
-    private List<Chat> chats = new ArrayList<>();
-
-    @ManyToMany(mappedBy = "assignedUsers")
-    private List<Case> assignedCases = new ArrayList<>();
+    @OneToMany(mappedBy = "chat")
+    private List<ChatMessage> messages = new ArrayList<>();
 
     @Override
     public int hashCode() {
@@ -55,9 +50,9 @@ public class User {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (!(obj instanceof User))
+        if (!(obj instanceof Chat))
             return false;
-        User other = (User) obj;
+        Chat other = (Chat) obj;
         return Objects.equals(id, other.id);
     }
 }
