@@ -37,7 +37,7 @@ public class RoleService {
     }
 
     @Transactional
-    public RoleResponseDto createRole(RoleRequestDto dto) {
+    public RoleResponseDto createRole(RoleRequestDto dto, String username) {
         if (roleRepository.existsByName(dto.name())) {
             throw new DuplicateRoleException("Role with name " + dto.name() + " already exists");
         }
@@ -49,7 +49,7 @@ public class RoleService {
     }
 
     @Transactional
-    public RoleResponseDto updateRole(Long id, RoleRequestDto dto) {
+    public RoleResponseDto updateRole(Long id, RoleRequestDto dto, String username) {
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Role with id " + id + " not found"));
         if (!role.getName().equals(dto.name()) && roleRepository.existsByName(dto.name())) {
@@ -63,10 +63,10 @@ public class RoleService {
     }
 
     @Transactional
-    public void deleteRole(Long id) {
-        if (!roleRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Role with id " + id + " not found");
-        }
+    public void deleteRole(Long id, String username) {
+        Role role = roleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Role with id " + id + " not found"));
+
         roleRepository.deleteById(id);
     }
 

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 import com.example.common.dto.RoleRequestDto;
 import com.example.common.dto.RoleResponseDto;
+import com.example.security.CurrentUser;
 import com.example.service.RoleService;
 import jakarta.validation.Valid;
 
@@ -39,21 +40,22 @@ public class RoleController {
 
     @PostMapping
     public ResponseEntity<RoleResponseDto> createRole(@Valid @RequestBody RoleRequestDto dto,
-            UriComponentsBuilder ucb) {
-        RoleResponseDto createdRole = roleService.createRole(dto);
+            @CurrentUser String username, UriComponentsBuilder ucb) {
+        RoleResponseDto createdRole = roleService.createRole(dto, username);
         URI location = ucb.path("/api/admin/roles/{id}").buildAndExpand(createdRole.id()).toUri();
         return ResponseEntity.created(location).body(createdRole);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<RoleResponseDto> updateRole(@PathVariable Long id, @Valid @RequestBody RoleRequestDto dto) {
-        roleService.updateRole(id, dto);
+    public ResponseEntity<RoleResponseDto> updateRole(@PathVariable Long id, @Valid @RequestBody RoleRequestDto dto,
+            @CurrentUser String username) {
+        roleService.updateRole(id, dto, username);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<RoleResponseDto> deleteRole(@PathVariable Long id) {
-        roleService.deleteRole(id);
+    public ResponseEntity<RoleResponseDto> deleteRole(@PathVariable Long id, @CurrentUser String username) {
+        roleService.deleteRole(id, username);
         return ResponseEntity.noContent().build();
     }
 }

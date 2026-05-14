@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -85,9 +86,17 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDto updateUser(Long id, UserRequestDto dto) {
+    public UserResponseDto updateUser(Long id, UserRequestDto dto, String username) {
         User user = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
+
+        if (!user.getUsername().equals(username)) {
+            throw new AuthorizationDeniedException("You can only update your own account");
+        }
+
+        if (!user.getUsername().equals(dto.username()) && repository.existsByUsername(dto.username())) {
+            throw new DuplicateUsernameException("Account with username " + dto.username() + " already exists");
+        }
 
         List<Role> roles = roleRepository.findAllByNameIn(dto.roleNames());
         if (roles.size() != dto.roleNames().size()) {
@@ -101,9 +110,9 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(Long id) {
-        if (!repository.existsById(id)) {
-            throw new ResourceNotFoundException("User with id " + id + " not found");
+    public void deleteUser(Long id, String username) {
+        User user = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
         }
         repository.deleteById(id);
     }
