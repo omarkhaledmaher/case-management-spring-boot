@@ -1,10 +1,15 @@
 package com.example.web;
 
 import java.net.URI;
+import java.security.Principal;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,15 +44,6 @@ public class ChatController {
         return ResponseEntity.ok(chats);
     }
 
-    @PostMapping("/{chatId}/message")
-    public ResponseEntity<ChatMessageResponseDto> createMessage(@PathVariable Long chatId,
-            @RequestBody ChatMessageRequestDto dto, @CurrentUser String username, UriComponentsBuilder ucb) {
-
-        ChatMessageResponseDto message = chatService.createChatMessage(chatId, dto, username);
-        URI location = ucb.path("/api/cases/{caseId}/chats/{id}").buildAndExpand(chatId, message.id()).toUri();
-        return ResponseEntity.created(location).body(message);
-    }
-
     @PostMapping
     public ResponseEntity<ChatResponseDto> createChat(@PathVariable Long caseId, @RequestBody ChatRequestDto dto,
             @CurrentUser String username,
@@ -56,5 +52,12 @@ public class ChatController {
         URI location = ucb.path("/api/cases/{caseId}/chats/{id}").buildAndExpand(caseId, createdChat.id()).toUri();
 
         return ResponseEntity.created(location).body(createdChat);
+    }
+
+    @MessageMapping("/chat/{chatId}/send")
+    @SendTo("/topic/chat/{chatId}")
+    public ChatMessageResponseDto createMessage(@DestinationVariable Long chatId, @Payload ChatMessageRequestDto dto,
+            Principal principal) {
+        return chatService.createChatMessage(chatId, dto, principal.getName());
     }
 }
