@@ -3,21 +3,15 @@ package com.example.service;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.example.common.dto.ChatMessageRequestDto;
-import com.example.common.dto.ChatMessageResponseDto;
 import com.example.common.dto.ChatResponseDto;
 import com.example.common.exceptions.ResourceNotFoundException;
 import com.example.mapper.ChatMapper;
-import com.example.mapper.ChatMessageMapper;
 import com.example.model.Case;
 import com.example.model.Chat;
-import com.example.model.ChatMessage;
 import com.example.model.User;
 import com.example.repository.CaseRepository;
-import com.example.repository.ChatMessageRepository;
 import com.example.repository.ChatRepository;
 import com.example.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -27,14 +21,11 @@ import lombok.AllArgsConstructor;
 public class ChatService {
     private final ChatMapper mapper;
     private final ChatRepository repository;
-    private final ChatMessageMapper messageMapper;
-    private final ChatMessageRepository messageRepository;
-    private final ChatRepository chatRepository;
     private final UserRepository userRepository;
     private final CaseRepository caseRepository;
 
     public ChatResponseDto getChatById(Long chatId, String username) {
-        Chat chat = chatRepository.findByIdAndParticipantsUsername(chatId, username)
+        Chat chat = repository.findByIdAndParticipantsUsername(chatId, username)
                 .orElseThrow(() -> new ResourceNotFoundException("Chat with id " + chatId + " not found"));
 
         return mapper.toDto(chat);
@@ -61,18 +52,5 @@ public class ChatService {
 
         Chat createdChat = repository.save(mapper.toChat(chatCase, participants, new ArrayList<>()));
         return mapper.toDto(createdChat);
-    }
-
-    @Transactional
-    public ChatMessageResponseDto createChatMessage(Long chatId, ChatMessageRequestDto dto, String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " not found"));
-
-        Chat chat = chatRepository.findByIdAndParticipants(chatId, user)
-                .orElseThrow(() -> new ResourceNotFoundException("Chat with id " + chatId + " not found"));
-
-        ChatMessage createdMessage = messageRepository.save(messageMapper.toChatMessage(dto, user, chat));
-        messageRepository.flush();
-        return messageMapper.toDto(createdMessage);
     }
 }

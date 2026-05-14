@@ -3,7 +3,6 @@ package com.example.web;
 import java.net.URI;
 import java.security.Principal;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -22,13 +21,16 @@ import com.example.common.dto.ChatMessageResponseDto;
 import com.example.common.dto.ChatRequestDto;
 import com.example.common.dto.ChatResponseDto;
 import com.example.security.CurrentUser;
+import com.example.service.ChatMessageService;
 import com.example.service.ChatService;
+import lombok.AllArgsConstructor;
 
 @RestController
 @RequestMapping("/api/cases/{caseId}/chats")
+@AllArgsConstructor
 public class ChatController {
-    @Autowired
-    private ChatService chatService;
+    private final ChatService chatService;
+    private final ChatMessageService chatMessageService;
 
     @GetMapping("/{chatId}")
     public ResponseEntity<ChatResponseDto> getChat(@PathVariable Long caseId, @PathVariable Long chatId,
@@ -58,6 +60,6 @@ public class ChatController {
     @SendTo("/topic/chat/{chatId}")
     public ChatMessageResponseDto createMessage(@DestinationVariable Long chatId, @Payload ChatMessageRequestDto dto,
             Principal principal) {
-        return chatService.createChatMessage(chatId, dto, principal.getName());
+        return chatMessageService.createChatMessage(chatId, dto, principal.getName());
     }
 }
