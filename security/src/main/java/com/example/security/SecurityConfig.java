@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         req -> req
                                 .requestMatchers("/", "/error", "/api/auth/**", "/api/test/**", "/chat/**",
-                                        "/index.html", "/**/*.js")
+                                        "/index.html", "/**/*.js", "/swagger-ui/**", "/v3/api-docs/**")
                                 .permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated());
