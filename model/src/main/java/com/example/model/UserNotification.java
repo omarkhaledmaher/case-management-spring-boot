@@ -24,7 +24,7 @@ public class UserNotification {
 
     private Boolean isRead = false;
 
-    Long userId;
+    private Long userId;
 
     @Override
     public int hashCode() {
