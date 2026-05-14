@@ -28,7 +28,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(
                         req -> req
-                                .requestMatchers("/", "/error", "/api/auth/**", "/api/test/**", "/chat/**")
+                                .requestMatchers("/", "/error", "/api/auth/**", "/api/test/**", "/chat/**",
+                                        "/index.html", "/**/*.js")
                                 .permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated());
