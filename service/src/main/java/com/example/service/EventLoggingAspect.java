@@ -5,6 +5,7 @@ import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import com.example.common.dto.EventDto;
@@ -31,7 +32,10 @@ public class EventLoggingAspect {
             return;
         }
 
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username =
+                (authentication != null && authentication.isAuthenticated()) ? authentication.getName()
+                        : "anonymousUser";
 
         String entityName = joinPoint.getTarget().getClass().getSimpleName().replace("Service", "");
 
