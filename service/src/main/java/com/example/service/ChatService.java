@@ -25,6 +25,7 @@ public class ChatService {
     private final UserRepository userRepository;
     private final CaseRepository caseRepository;
     private final EventPublisher eventPublisher;
+    private final UserNotificationPublisher userNotificationPublisher;
 
     public ChatResponseDto getChatById(Long chatId, String username) {
         Chat chat = repository.findByIdAndParticipantsUsername(chatId, username)
@@ -55,6 +56,17 @@ public class ChatService {
         Chat createdChat = repository.save(mapper.toChat(chatCase, participants, new ArrayList<>()));
         ChatResponseDto responseDto = mapper.toDto(createdChat);
         eventPublisher.publishEvent(DatabaseOperation.CREATED, "Chat", "createChat", username, responseDto);
+        publishChatNotification(participants, username, chatCase);
+
         return responseDto;
+    }
+
+    private void publishChatNotification(List<User> participants, String username, Case chatCase) {
+        participants.stream()
+                .filter(p -> !p.getUsername().equals(username))
+                .forEach(p -> userNotificationPublisher.publishUserNotification(
+                        "New chat created",
+                        "A new chat has been created for case " + chatCase.getDescription(),
+                        p.getId()));
     }
 }

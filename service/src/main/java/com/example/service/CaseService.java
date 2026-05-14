@@ -24,6 +24,7 @@ public class CaseService {
     private final CaseRepository repository;
     private final UserRepository userRepository;
     private final EventPublisher eventPublisher;
+    private final UserNotificationPublisher userNotificationPublisher;
 
     public CaseResponseDto getCaseById(Long id, String username) {
         Case caseEntity = repository.findByIdAndAssignedUsersUsername(id, username)
@@ -48,6 +49,18 @@ public class CaseService {
         repository.flush();
         CaseResponseDto responseDto = mapper.toDto(savedCase);
         eventPublisher.publishEvent(DatabaseOperation.CREATED, "Case", "createCase", username, responseDto);
+        publishCaseNotification(assignedUsers, username);
+
         return responseDto;
+    }
+
+    private void publishCaseNotification(List<User> assignedUsers, String username) {
+        assignedUsers.stream()
+                .filter(assignedUser -> !assignedUser.getUsername().equals(username))
+                .forEach(assignedUser -> userNotificationPublisher.publishUserNotification(
+                        "New case assigned",
+                        "You have been assigned to a new case.",
+                        assignedUser.getId()));
+
     }
 }
