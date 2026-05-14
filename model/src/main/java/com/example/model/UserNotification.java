@@ -1,6 +1,5 @@
 package com.example.model;
 
-import java.util.List;
 import java.util.Objects;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,7 +24,7 @@ public class UserNotification {
 
     private Boolean isRead = false;
 
-    List<Long> userIds;
+    Long userId;
 
     @Override
     public int hashCode() {

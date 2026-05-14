@@ -11,7 +11,7 @@ public class UserNotificationMapper {
         notification.setTitle(dto.title());
         notification.setMessage(dto.message());
         notification.setIsRead(dto.isRead());
-        notification.setUserIds(dto.userIds());
+        notification.setUserId(dto.userId());
         return notification;
     }
 
@@ -20,6 +20,6 @@ public class UserNotificationMapper {
                 notification.getTitle(),
                 notification.getMessage(),
                 notification.getIsRead(),
-                notification.getUserIds());
+                notification.getUserId());
     }
 }
