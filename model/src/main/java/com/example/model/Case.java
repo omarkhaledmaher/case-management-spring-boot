@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import com.example.common.enums.CaseStatus;
 import com.example.common.enums.CaseType;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -39,6 +40,9 @@ public class Case {
     private CaseType type;
 
     private String description;
+
+    @Embedded
+    private CaseDetails details;
 
     @CreationTimestamp
     private Instant createdAt;
