@@ -3,6 +3,7 @@ package com.example.service;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.common.dto.ChatMessageRequestDto;
@@ -65,7 +66,7 @@ public class ChatService {
     @Transactional
     public ChatMessageResponseDto createChatMessage(Long chatId, ChatMessageRequestDto dto, String username) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("User with username " + username + " not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " not found"));
 
         Chat chat = chatRepository.findByIdAndParticipants(chatId, user)
                 .orElseThrow(() -> new ResourceNotFoundException("Chat with id " + chatId + " not found"));
