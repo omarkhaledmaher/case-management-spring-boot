@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 import com.example.common.dto.CaseRequestDto;
@@ -32,6 +33,13 @@ public class CaseController {
     @GetMapping
     public ResponseEntity<List<CaseResponseDto>> getAllCases(@CurrentUser String username, Pageable pageable) {
         return ResponseEntity.ok(caseService.getAllCases(username, pageable));
+    }
+
+
+    @GetMapping("/search")
+    public ResponseEntity<List<CaseResponseDto>> searchCases(@RequestParam(required = false) String searchTerm,
+            @CurrentUser String username, Pageable pageable) {
+        return ResponseEntity.ok(caseService.searchCases(searchTerm, username, pageable));
     }
 
     @PostMapping

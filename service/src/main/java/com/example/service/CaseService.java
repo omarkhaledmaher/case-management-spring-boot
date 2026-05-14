@@ -46,4 +46,9 @@ public class CaseService {
         repository.flush();
         return mapper.toDto(savedCase);
     }
+
+    public List<CaseResponseDto> searchCases(String searchTerm, String username, Pageable pageable) {
+        List<Case> cases = repository.searchByDetailsAndAssignedUser(searchTerm, username);
+        return cases.stream().map(mapper::toDto).toList();
+    }
 }

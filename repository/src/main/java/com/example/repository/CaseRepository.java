@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import com.example.model.Case;
 
@@ -13,4 +15,12 @@ public interface CaseRepository extends JpaRepository<Case, Long> {
 
     Optional<Case> findByIdAndAssignedUsersUsername(Long caseId, String username);
 
+    @Query("SELECT DISTINCT c FROM Case c JOIN c.assignedUsers u WHERE " +
+            "u.username = :username AND (" +
+            "LOWER(c.details.customerName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(c.details.applicantName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(c.details.referenceName) LIKE LOWER(CONCAT('%', :searchTerm, '%'))" +
+            ")")
+    List<Case> searchByDetailsAndAssignedUser(@Param("searchTerm") String searchTerm,
+            @Param("username") String username);
 }
