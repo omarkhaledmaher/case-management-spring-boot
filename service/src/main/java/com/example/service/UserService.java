@@ -15,6 +15,7 @@ import com.example.common.dto.LoginDto;
 import com.example.common.dto.RegisterDto;
 import com.example.common.dto.UserRequestDto;
 import com.example.common.dto.UserResponseDto;
+import com.example.common.enums.DatabaseOperation;
 import com.example.common.exceptions.DuplicateUsernameException;
 import com.example.common.exceptions.ResourceNotFoundException;
 import com.example.mapper.UserMapper;
@@ -35,6 +36,7 @@ public class UserService {
     private final JwtUtils jwtUtils;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
+    private final EventPublisher eventPublisher;
 
     @Transactional
     public JwtDto registerUser(RegisterDto dto) throws DuplicateUsernameException {
@@ -81,8 +83,10 @@ public class UserService {
         String encodedPassword = passwordEncoder.encode(dto.password());
 
         User user = mapper.toUser(dto, encodedPassword, roles);
+        UserResponseDto responseDto = mapper.toDto(repository.save(user));
 
-        return mapper.toDto(repository.save(user));
+        eventPublisher.publishEvent(DatabaseOperation.CREATED, "User", "createUser", dto.username(), responseDto);
+        return responseDto;
     }
 
     @Transactional
@@ -106,14 +110,18 @@ public class UserService {
         user.setUsername(dto.username());
         user.setPassword(passwordEncoder.encode(dto.password()));
         user.setRoles(roles);
-        return mapper.toDto(user);
+
+        UserResponseDto responseDto = mapper.toDto(user);
+        eventPublisher.publishEvent(DatabaseOperation.UPDATED, "User", "updateUser", dto.username(), responseDto);
+        return responseDto;
     }
 
     @Transactional
     public void deleteUser(Long id, String username) {
         User user = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
-        }
+        UserResponseDto dto = mapper.toDto(user);
+        eventPublisher.publishEvent(DatabaseOperation.DELETED, "User", "deleteUser", username, dto);
         repository.deleteById(id);
     }
 }

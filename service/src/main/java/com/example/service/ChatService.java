@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.common.dto.ChatResponseDto;
+import com.example.common.enums.DatabaseOperation;
 import com.example.common.exceptions.ResourceNotFoundException;
 import com.example.mapper.ChatMapper;
 import com.example.model.Case;
@@ -23,6 +24,7 @@ public class ChatService {
     private final ChatRepository repository;
     private final UserRepository userRepository;
     private final CaseRepository caseRepository;
+    private final EventPublisher eventPublisher;
 
     public ChatResponseDto getChatById(Long chatId, String username) {
         Chat chat = repository.findByIdAndParticipantsUsername(chatId, username)
@@ -51,6 +53,8 @@ public class ChatService {
         }
 
         Chat createdChat = repository.save(mapper.toChat(chatCase, participants, new ArrayList<>()));
-        return mapper.toDto(createdChat);
+        ChatResponseDto responseDto = mapper.toDto(createdChat);
+        eventPublisher.publishEvent(DatabaseOperation.CREATED, "Chat", "createChat", username, responseDto);
+        return responseDto;
     }
 }

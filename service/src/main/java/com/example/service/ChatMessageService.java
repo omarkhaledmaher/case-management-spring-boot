@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.common.dto.ChatMessageRequestDto;
 import com.example.common.dto.ChatMessageResponseDto;
+import com.example.common.enums.DatabaseOperation;
 import com.example.common.exceptions.ResourceNotFoundException;
 import com.example.mapper.ChatMessageMapper;
 import com.example.model.Chat;
@@ -22,6 +23,7 @@ public class ChatMessageService {
     private final ChatMessageRepository repository;
     private final ChatRepository chatRepository;
     private final UserRepository userRepository;
+    private final EventPublisher eventPublisher;
 
     @Transactional
     public ChatMessageResponseDto createChatMessage(Long chatId, ChatMessageRequestDto dto, String username) {
@@ -33,6 +35,9 @@ public class ChatMessageService {
 
         ChatMessage createdMessage = repository.save(mapper.toChatMessage(dto, user, chat));
         repository.flush();
-        return mapper.toDto(createdMessage);
+        ChatMessageResponseDto responseDto = mapper.toDto(createdMessage);
+        eventPublisher.publishEvent(DatabaseOperation.CREATED, "ChatMessage", "createChatMessage", username,
+                responseDto);
+        return responseDto;
     }
 }
