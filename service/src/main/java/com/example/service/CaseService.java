@@ -67,7 +67,7 @@ public class CaseService {
 
     public List<CaseResponseDto> searchCases(String searchTerm, Pageable pageable) {
         String username = authFacade.getUsername();
-        List<Case> cases = repository.searchByDetailsAndAssignedUser(searchTerm, username);
+        List<Case> cases = repository.searchByDetailsAndAssignedUser(searchTerm, username, pageable);
         return cases.stream().map(mapper::toDto).toList();
     }
 }
