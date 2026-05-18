@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 import com.example.common.dto.CaseRequestDto;
 import com.example.common.dto.CaseResponseDto;
-import com.example.security.CurrentUser;
 import com.example.service.CaseService;
 
 @RestController
@@ -25,27 +24,26 @@ public class CaseController {
     private CaseService caseService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<CaseResponseDto> getCase(@PathVariable Long id, @CurrentUser String username) {
-        CaseResponseDto caseResponse = caseService.getCaseById(id, username);
+    public ResponseEntity<CaseResponseDto> getCase(@PathVariable Long id) {
+        CaseResponseDto caseResponse = caseService.getCaseById(id);
         return ResponseEntity.ok(caseResponse);
     }
 
     @GetMapping
-    public ResponseEntity<List<CaseResponseDto>> getAllCases(@CurrentUser String username, Pageable pageable) {
-        return ResponseEntity.ok(caseService.getAllCases(username, pageable));
+    public ResponseEntity<List<CaseResponseDto>> getAllCases(Pageable pageable) {
+        return ResponseEntity.ok(caseService.getAllCases(pageable));
     }
 
 
     @GetMapping("/search")
     public ResponseEntity<List<CaseResponseDto>> searchCases(@RequestParam(required = false) String searchTerm,
-            @CurrentUser String username, Pageable pageable) {
-        return ResponseEntity.ok(caseService.searchCases(searchTerm, username, pageable));
+            Pageable pageable) {
+        return ResponseEntity.ok(caseService.searchCases(searchTerm, pageable));
     }
 
     @PostMapping
-    public ResponseEntity<CaseResponseDto> createCase(@RequestBody CaseRequestDto dto, @CurrentUser String username,
-            UriComponentsBuilder ucb) {
-        CaseResponseDto createdCase = caseService.createCase(dto, username);
+    public ResponseEntity<CaseResponseDto> createCase(@RequestBody CaseRequestDto dto, UriComponentsBuilder ucb) {
+        CaseResponseDto createdCase = caseService.createCase(dto);
         URI location = ucb.path("/api/cases/{id}").buildAndExpand(createdCase.id()).toUri();
         return ResponseEntity.created(location).body(createdCase);
     }

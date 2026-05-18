@@ -3,7 +3,6 @@ package com.example.service;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.common.dto.CaseRequestDto;
@@ -15,6 +14,7 @@ import com.example.model.Case;
 import com.example.model.User;
 import com.example.repository.CaseRepository;
 import com.example.repository.UserRepository;
+import com.example.security.IAuthFacade;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -25,30 +25,31 @@ public class CaseService {
     private final UserRepository userRepository;
     private final EventPublisher eventPublisher;
     private final UserNotificationPublisher userNotificationPublisher;
+    private final IAuthFacade authFacade;
 
-    public CaseResponseDto getCaseById(Long id, String username) {
+    public CaseResponseDto getCaseById(Long id) {
+        String username = authFacade.getUsername();
         Case caseEntity = repository.findByIdAndAssignedUsersUsername(id, username)
                 .orElseThrow(() -> new ResourceNotFoundException("Case with id " + id + " not found"));
 
         return mapper.toDto(caseEntity);
     }
 
-    public List<CaseResponseDto> getAllCases(String username, Pageable pageable) {
+    public List<CaseResponseDto> getAllCases(Pageable pageable) {
+        String username = authFacade.getUsername();
         List<Case> cases = repository.findByAssignedUsersUsername(username, pageable);
         return cases.stream().map(mapper::toDto).toList();
     }
 
     @Transactional
-    public CaseResponseDto createCase(CaseRequestDto dto, String username) {
-        if (!userRepository.existsByUsername(username)) {
-            throw new UsernameNotFoundException("User with username " + username + " not found");
-        }
+    public CaseResponseDto createCase(CaseRequestDto dto) {
+        String username = authFacade.getUsername();
 
         List<User> assignedUsers = userRepository.findAllById(dto.assignedUserIds());
         Case savedCase = repository.save(mapper.toCase(dto, assignedUsers, new ArrayList<>()));
         repository.flush();
         CaseResponseDto responseDto = mapper.toDto(savedCase);
-        eventPublisher.publishEvent(DatabaseOperation.CREATED, "Case", "createCase", username, responseDto);
+        eventPublisher.publishEvent(DatabaseOperation.CREATED, "Case", "createCase", responseDto);
         publishCaseNotification(assignedUsers, username);
 
         return responseDto;
@@ -64,7 +65,8 @@ public class CaseService {
 
     }
 
-    public List<CaseResponseDto> searchCases(String searchTerm, String username, Pageable pageable) {
+    public List<CaseResponseDto> searchCases(String searchTerm, Pageable pageable) {
+        String username = authFacade.getUsername();
         List<Case> cases = repository.searchByDetailsAndAssignedUser(searchTerm, username);
         return cases.stream().map(mapper::toDto).toList();
     }
