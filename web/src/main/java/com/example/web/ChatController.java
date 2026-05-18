@@ -20,7 +20,6 @@ import com.example.common.dto.ChatMessageRequestDto;
 import com.example.common.dto.ChatMessageResponseDto;
 import com.example.common.dto.ChatRequestDto;
 import com.example.common.dto.ChatResponseDto;
-import com.example.security.CurrentUser;
 import com.example.service.ChatMessageService;
 import com.example.service.ChatService;
 import lombok.AllArgsConstructor;
@@ -33,24 +32,21 @@ public class ChatController {
     private final ChatMessageService chatMessageService;
 
     @GetMapping("/{chatId}")
-    public ResponseEntity<ChatResponseDto> getChat(@PathVariable Long caseId, @PathVariable Long chatId,
-            @CurrentUser String username) {
-        ChatResponseDto chat = chatService.getChatById(chatId, username);
+    public ResponseEntity<ChatResponseDto> getChat(@PathVariable Long caseId, @PathVariable Long chatId) {
+        ChatResponseDto chat = chatService.getChatById(chatId);
         return ResponseEntity.ok(chat);
     }
 
     @GetMapping
-    public ResponseEntity<List<ChatResponseDto>> getAllChats(@PathVariable Long caseId,
-            @CurrentUser String username, Pageable pageable) {
-        List<ChatResponseDto> chats = chatService.getAllChatsByCaseId(caseId, username, pageable);
+    public ResponseEntity<List<ChatResponseDto>> getAllChats(@PathVariable Long caseId, Pageable pageable) {
+        List<ChatResponseDto> chats = chatService.getAllChatsByCaseId(caseId, pageable);
         return ResponseEntity.ok(chats);
     }
 
     @PostMapping
     public ResponseEntity<ChatResponseDto> createChat(@PathVariable Long caseId, @RequestBody ChatRequestDto dto,
-            @CurrentUser String username,
-            UriComponentsBuilder ucb) {
-        ChatResponseDto createdChat = chatService.createChat(caseId, dto.participantIds(), username);
+                    UriComponentsBuilder ucb) {
+        ChatResponseDto createdChat = chatService.createChat(caseId, dto.participantIds());
         URI location = ucb.path("/api/cases/{caseId}/chats/{id}").buildAndExpand(caseId, createdChat.id()).toUri();
 
         return ResponseEntity.created(location).body(createdChat);
@@ -60,6 +56,6 @@ public class ChatController {
     @SendTo("/topic/chat/{chatId}")
     public ChatMessageResponseDto createMessage(@DestinationVariable Long chatId, @Payload ChatMessageRequestDto dto,
             Principal principal) {
-        return chatMessageService.createChatMessage(chatId, dto, principal.getName());
+        return chatMessageService.createChatMessage(chatId, dto, principal);
     }
 }

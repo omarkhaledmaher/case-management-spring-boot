@@ -1,5 +1,6 @@
 package com.example.service;
 
+import java.security.Principal;
 import java.util.List;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,9 @@ public class ChatMessageService {
     private final UserNotificationPublisher userNotificationPublisher;
 
     @Transactional
-    public ChatMessageResponseDto createChatMessage(Long chatId, ChatMessageRequestDto dto, String username) {
+    public ChatMessageResponseDto createChatMessage(Long chatId, ChatMessageRequestDto dto, Principal principal) {
+        String username = principal.getName();
+
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " not found"));
 

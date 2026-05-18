@@ -15,6 +15,7 @@ import com.example.model.User;
 import com.example.repository.CaseRepository;
 import com.example.repository.ChatRepository;
 import com.example.repository.UserRepository;
+import com.example.security.IAuthFacade;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -26,22 +27,26 @@ public class ChatService {
     private final CaseRepository caseRepository;
     private final EventPublisher eventPublisher;
     private final UserNotificationPublisher userNotificationPublisher;
+    private final IAuthFacade authFacade;
 
-    public ChatResponseDto getChatById(Long chatId, String username) {
+    public ChatResponseDto getChatById(Long chatId) {
+        String username = authFacade.getUsername();
         Chat chat = repository.findByIdAndParticipantsUsername(chatId, username)
                 .orElseThrow(() -> new ResourceNotFoundException("Chat with id " + chatId + " not found"));
 
         return mapper.toDto(chat);
     }
 
-    public List<ChatResponseDto> getAllChatsByCaseId(Long caseId, String username, Pageable pageable) {
+    public List<ChatResponseDto> getAllChatsByCaseId(Long caseId, Pageable pageable) {
+        String username = authFacade.getUsername();
         List<Chat> chats = repository.findByChatCaseIdAndParticipantsUsername(caseId, username, pageable);
 
         return chats.stream().map(mapper::toDto).toList();
     }
 
     @Transactional
-    public ChatResponseDto createChat(Long caseId, List<Long> participantIds, String username) {
+    public ChatResponseDto createChat(Long caseId, List<Long> participantIds) {
+        String username = authFacade.getUsername();
         Case chatCase = caseRepository.findByIdAndAssignedUsersUsername(caseId, username)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Case with id " + caseId + " not found or you are not assigned to it"));
@@ -55,7 +60,7 @@ public class ChatService {
 
         Chat createdChat = repository.save(mapper.toChat(chatCase, participants, new ArrayList<>()));
         ChatResponseDto responseDto = mapper.toDto(createdChat);
-        eventPublisher.publishEvent(DatabaseOperation.CREATED, "Chat", "createChat", username, responseDto);
+        eventPublisher.publishEvent(DatabaseOperation.CREATED, "Chat", "createChat", responseDto);
         publishChatNotification(participants, username, chatCase);
 
         return responseDto;
