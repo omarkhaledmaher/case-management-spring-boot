@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.common.dto.RoleRequestDto;
 import com.example.common.dto.RoleResponseDto;
+import com.example.common.enums.DatabaseOperation;
 import com.example.common.exceptions.DuplicateRoleException;
 import com.example.common.exceptions.ResourceNotFoundException;
 import com.example.mapper.RoleMapper;
@@ -24,6 +25,7 @@ public class RoleService {
     private final PrivilegeRepository privilegeRepository;
     private final RoleRepository roleRepository;
     private final RoleMapper mapper;
+    private final EventPublisher eventPublisher;
 
     public RoleResponseDto getRoleById(Long id) {
         return roleRepository.findById(id).map(mapper::toDto)
@@ -37,7 +39,7 @@ public class RoleService {
     }
 
     @Transactional
-    public RoleResponseDto createRole(RoleRequestDto dto) {
+    public RoleResponseDto createRole(RoleRequestDto dto, String username) {
         if (roleRepository.existsByName(dto.name())) {
             throw new DuplicateRoleException("Role with name " + dto.name() + " already exists");
         }
@@ -45,11 +47,13 @@ public class RoleService {
         List<Privilege> privileges = getPrivileges(dto.privileges());
         Role role = mapper.toRole(dto, privileges);
 
-        return mapper.toDto(roleRepository.save(role));
+        RoleResponseDto responseDto = mapper.toDto(roleRepository.save(role));
+        eventPublisher.publishEvent(DatabaseOperation.CREATED, "Role", "createRole", username, responseDto);
+        return responseDto;
     }
 
     @Transactional
-    public RoleResponseDto updateRole(Long id, RoleRequestDto dto) {
+    public RoleResponseDto updateRole(Long id, RoleRequestDto dto, String username) {
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Role with id " + id + " not found"));
         if (!role.getName().equals(dto.name()) && roleRepository.existsByName(dto.name())) {
@@ -59,15 +63,19 @@ public class RoleService {
         List<Privilege> privileges = getPrivileges(dto.privileges());
         role.setPrivileges(privileges);
 
-        return mapper.toDto(role);
+        RoleResponseDto responseDto = mapper.toDto(role);
+        eventPublisher.publishEvent(DatabaseOperation.UPDATED, "Role", "updateRole", username, responseDto);
+
+        return responseDto;
     }
 
     @Transactional
-    public void deleteRole(Long id) {
-        if (!roleRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Role with id " + id + " not found");
-        }
+    public void deleteRole(Long id, String username) {
+        Role role = roleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Role with id " + id + " not found"));
+        RoleResponseDto dto = mapper.toDto(role);
         roleRepository.deleteById(id);
+        eventPublisher.publishEvent(DatabaseOperation.DELETED, "Role", "deleteRole", username, dto);
     }
 
     private List<Privilege> getPrivileges(List<String> privilegeNames) {
@@ -83,7 +91,11 @@ public class RoleService {
                 .toList();
 
         if (!newPrivileges.isEmpty()) {
-            privilegeRepository.saveAll(newPrivileges);
+            List<String> savedPrivileges = privilegeRepository.saveAll(newPrivileges).stream()
+                    .map(Privilege::getName)
+                    .toList();
+            eventPublisher.publishEvent(DatabaseOperation.CREATED, "Privilege", "createPrivileges", "system",
+                    savedPrivileges);
         }
 
         List<Privilege> allPrivileges = new ArrayList<>(existingPrivileges);

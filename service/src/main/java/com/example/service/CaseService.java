@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.common.dto.CaseRequestDto;
 import com.example.common.dto.CaseResponseDto;
+import com.example.common.enums.DatabaseOperation;
 import com.example.common.exceptions.ResourceNotFoundException;
 import com.example.mapper.CaseMapper;
 import com.example.model.Case;
@@ -22,6 +23,8 @@ public class CaseService {
     private final CaseMapper mapper;
     private final CaseRepository repository;
     private final UserRepository userRepository;
+    private final EventPublisher eventPublisher;
+    private final UserNotificationPublisher userNotificationPublisher;
 
     public CaseResponseDto getCaseById(Long id, String username) {
         Case caseEntity = repository.findByIdAndAssignedUsersUsername(id, username)
@@ -44,7 +47,21 @@ public class CaseService {
         List<User> assignedUsers = userRepository.findAllById(dto.assignedUserIds());
         Case savedCase = repository.save(mapper.toCase(dto, assignedUsers, new ArrayList<>()));
         repository.flush();
-        return mapper.toDto(savedCase);
+        CaseResponseDto responseDto = mapper.toDto(savedCase);
+        eventPublisher.publishEvent(DatabaseOperation.CREATED, "Case", "createCase", username, responseDto);
+        publishCaseNotification(assignedUsers, username);
+
+        return responseDto;
+    }
+
+    private void publishCaseNotification(List<User> assignedUsers, String username) {
+        assignedUsers.stream()
+                .filter(assignedUser -> !assignedUser.getUsername().equals(username))
+                .forEach(assignedUser -> userNotificationPublisher.publishUserNotification(
+                        "New case assigned",
+                        "You have been assigned to a new case.",
+                        assignedUser.getId()));
+
     }
 
     public List<CaseResponseDto> searchCases(String searchTerm, String username, Pageable pageable) {
