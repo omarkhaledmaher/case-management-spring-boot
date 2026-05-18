@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import com.example.common.dto.UserNotificationResponseDto;
 import com.example.service.UserNotificationService;
 
@@ -14,6 +15,11 @@ import com.example.service.UserNotificationService;
 public class UserNotificationController {
     @Autowired
     private UserNotificationService notificationService;
+
+    @GetMapping("/subscribe")
+    public SseEmitter subscribeToNotifications() {
+        return notificationService.subscribe();
+    }
 
     @GetMapping
     public List<UserNotificationResponseDto> getUserNotifications(Pageable pageable) {
