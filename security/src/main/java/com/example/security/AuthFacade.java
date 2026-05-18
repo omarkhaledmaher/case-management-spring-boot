@@ -10,4 +10,9 @@ public class AuthFacade implements IAuthFacade {
     public Authentication getAuthentication() {
         return SecurityContextHolder.getContext().getAuthentication();
     }
+
+    @Override
+    public String getUsername() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
+    }
 }

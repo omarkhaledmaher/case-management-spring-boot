@@ -4,4 +4,6 @@ import org.springframework.security.core.Authentication;
 
 public interface IAuthFacade {
     Authentication getAuthentication();
+
+    String getUsername();
 }
