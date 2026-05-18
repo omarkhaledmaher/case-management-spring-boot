@@ -31,7 +31,6 @@ public class SecurityConfig {
                                 .requestMatchers("/", "/error", "/api/auth/**", "/api/dev/**", "/chat/**",
                                         "/index.html", "/**/*.js", "/swagger-ui/**", "/v3/api-docs/**")
                                 .permitAll()
-                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
                                 .anyRequest().authenticated());
 
         http.authenticationProvider(authenticationProvider());

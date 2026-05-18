@@ -20,7 +20,7 @@ import com.example.service.RoleService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/admin/roles")
+@RequestMapping("/api/roles")
 public class RoleController {
     @Autowired
     private RoleService roleService;
@@ -41,7 +41,7 @@ public class RoleController {
     public ResponseEntity<RoleResponseDto> createRole(@Valid @RequestBody RoleRequestDto dto,
             UriComponentsBuilder ucb) {
         RoleResponseDto createdRole = roleService.createRole(dto);
-        URI location = ucb.path("/api/admin/roles/{id}").buildAndExpand(createdRole.id()).toUri();
+        URI location = ucb.path("/api/roles/{id}").buildAndExpand(createdRole.id()).toUri();
         return ResponseEntity.created(location).body(createdRole);
     }
 

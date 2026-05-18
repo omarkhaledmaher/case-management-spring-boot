@@ -29,7 +29,7 @@ public class DevController {
     public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserRequestDto dto,
             UriComponentsBuilder ucb) {
         UserResponseDto createdUser = userService.createUser(dto);
-        URI location = ucb.path("/admin/users/{id}").buildAndExpand(createdUser.id()).toUri();
+        URI location = ucb.path("/users/{id}").buildAndExpand(createdUser.id()).toUri();
         return ResponseEntity.created(location).body(createdUser);
     }
 
@@ -37,7 +37,7 @@ public class DevController {
     public ResponseEntity<RoleResponseDto> createRole(@Valid @RequestBody RoleRequestDto dto,
             UriComponentsBuilder ucb) {
         RoleResponseDto createdRole = roleService.createRole(dto);
-        URI location = ucb.path("/api/admin/roles/{id}").buildAndExpand(createdRole.id()).toUri();
+        URI location = ucb.path("/api/roles/{id}").buildAndExpand(createdRole.id()).toUri();
         return ResponseEntity.created(location).body(createdRole);
     }
 }

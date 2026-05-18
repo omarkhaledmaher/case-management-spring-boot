@@ -20,7 +20,7 @@ import com.example.service.UserService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/admin/users")
+@RequestMapping("/api/users")
 public class UserController {
     @Autowired
     private UserService userService;
@@ -39,7 +39,7 @@ public class UserController {
     public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserRequestDto dto,
             UriComponentsBuilder ucb) {
         UserResponseDto createdUser = userService.createUser(dto);
-        URI location = ucb.path("/admin/users/{id}").buildAndExpand(createdUser.id()).toUri();
+        URI location = ucb.path("/api/users/{id}").buildAndExpand(createdUser.id()).toUri();
         return ResponseEntity.created(location).body(createdUser);
     }
 
