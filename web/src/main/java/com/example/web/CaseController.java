@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,13 +35,13 @@ public class CaseController {
         return ResponseEntity.ok(caseService.getAllCases(pageable));
     }
 
-
     @GetMapping("/search")
     public ResponseEntity<List<CaseResponseDto>> searchCases(@RequestParam(required = false) String searchTerm,
             Pageable pageable) {
         return ResponseEntity.ok(caseService.searchCases(searchTerm, pageable));
     }
 
+    @PreAuthorize("hasAuthority('CASE_CREATE')")
     @PostMapping
     public ResponseEntity<CaseResponseDto> createCase(@RequestBody CaseRequestDto dto, UriComponentsBuilder ucb) {
         CaseResponseDto createdCase = caseService.createCase(dto);
