@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 import com.example.common.dto.UserRequestDto;
 import com.example.common.dto.UserResponseDto;
-import com.example.security.CurrentUser;
 import com.example.service.UserService;
 import jakarta.validation.Valid;
 
@@ -45,15 +44,14 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long id, @Valid @RequestBody UserRequestDto dto,
-            @CurrentUser String username) {
-        userService.updateUser(id, dto, username);
+    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long id, @Valid @RequestBody UserRequestDto dto) {
+        userService.updateUser(id, dto);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<UserResponseDto> deleteUser(@PathVariable Long id, @CurrentUser String username) {
-        userService.deleteUser(id, username);
+    public ResponseEntity<UserResponseDto> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
 }

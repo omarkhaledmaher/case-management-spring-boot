@@ -84,12 +84,12 @@ public class UserService {
         User user = mapper.toUser(dto, encodedPassword, roles);
         UserResponseDto responseDto = mapper.toDto(repository.save(user));
 
-        eventPublisher.publishEvent(DatabaseOperation.CREATED, "User", "createUser", dto.username(), responseDto);
+        eventPublisher.publishEvent(DatabaseOperation.CREATED, "User", "createUser", responseDto);
         return responseDto;
     }
 
     @Transactional
-    public UserResponseDto updateUser(Long id, UserRequestDto dto, String username) {
+    public UserResponseDto updateUser(Long id, UserRequestDto dto) {
         User user = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
 
@@ -107,16 +107,16 @@ public class UserService {
         user.setRoles(roles);
 
         UserResponseDto responseDto = mapper.toDto(user);
-        eventPublisher.publishEvent(DatabaseOperation.UPDATED, "User", "updateUser", dto.username(), responseDto);
+        eventPublisher.publishEvent(DatabaseOperation.UPDATED, "User", "updateUser", responseDto);
         return responseDto;
     }
 
     @Transactional
-    public void deleteUser(Long id, String username) {
+    public void deleteUser(Long id) {
         User user = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
         UserResponseDto dto = mapper.toDto(user);
-        eventPublisher.publishEvent(DatabaseOperation.DELETED, "User", "deleteUser", username, dto);
+        eventPublisher.publishEvent(DatabaseOperation.DELETED, "User", "deleteUser", dto);
         repository.deleteById(id);
     }
 }
