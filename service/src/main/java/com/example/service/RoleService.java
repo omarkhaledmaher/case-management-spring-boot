@@ -39,7 +39,7 @@ public class RoleService {
     }
 
     @Transactional
-    public RoleResponseDto createRole(RoleRequestDto dto, String username) {
+    public RoleResponseDto createRole(RoleRequestDto dto) {
         if (roleRepository.existsByName(dto.name())) {
             throw new DuplicateRoleException("Role with name " + dto.name() + " already exists");
         }
@@ -48,12 +48,12 @@ public class RoleService {
         Role role = mapper.toRole(dto, privileges);
 
         RoleResponseDto responseDto = mapper.toDto(roleRepository.save(role));
-        eventPublisher.publishEvent(DatabaseOperation.CREATED, "Role", "createRole", username, responseDto);
+        eventPublisher.publishEvent(DatabaseOperation.CREATED, "Role", "createRole", responseDto);
         return responseDto;
     }
 
     @Transactional
-    public RoleResponseDto updateRole(Long id, RoleRequestDto dto, String username) {
+    public RoleResponseDto updateRole(Long id, RoleRequestDto dto) {
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Role with id " + id + " not found"));
         if (!role.getName().equals(dto.name()) && roleRepository.existsByName(dto.name())) {
@@ -64,18 +64,18 @@ public class RoleService {
         role.setPrivileges(privileges);
 
         RoleResponseDto responseDto = mapper.toDto(role);
-        eventPublisher.publishEvent(DatabaseOperation.UPDATED, "Role", "updateRole", username, responseDto);
+        eventPublisher.publishEvent(DatabaseOperation.UPDATED, "Role", "updateRole", responseDto);
 
         return responseDto;
     }
 
     @Transactional
-    public void deleteRole(Long id, String username) {
+    public void deleteRole(Long id) {
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Role with id " + id + " not found"));
         RoleResponseDto dto = mapper.toDto(role);
         roleRepository.deleteById(id);
-        eventPublisher.publishEvent(DatabaseOperation.DELETED, "Role", "deleteRole", username, dto);
+        eventPublisher.publishEvent(DatabaseOperation.DELETED, "Role", "deleteRole", dto);
     }
 
     private List<Privilege> getPrivileges(List<String> privilegeNames) {
@@ -94,8 +94,7 @@ public class RoleService {
             List<String> savedPrivileges = privilegeRepository.saveAll(newPrivileges).stream()
                     .map(Privilege::getName)
                     .toList();
-            eventPublisher.publishEvent(DatabaseOperation.CREATED, "Privilege", "createPrivileges", "system",
-                    savedPrivileges);
+            eventPublisher.publishEvent(DatabaseOperation.CREATED, "Privilege", "createPrivileges", savedPrivileges);
         }
 
         List<Privilege> allPrivileges = new ArrayList<>(existingPrivileges);
