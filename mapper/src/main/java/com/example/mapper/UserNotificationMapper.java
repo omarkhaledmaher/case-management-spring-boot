@@ -2,6 +2,7 @@ package com.example.mapper;
 
 import org.springframework.stereotype.Component;
 import com.example.common.dto.UserNotificationDto;
+import com.example.common.dto.UserNotificationResponseDto;
 import com.example.model.UserNotification;
 
 @Component
@@ -21,5 +22,12 @@ public class UserNotificationMapper {
                 notification.getMessage(),
                 notification.getIsRead(),
                 notification.getUserId());
+    }
+
+    public UserNotificationResponseDto toResponseDto(UserNotification notification) {
+        return new UserNotificationResponseDto(
+                notification.getTitle(),
+                notification.getMessage(),
+                notification.getIsRead());
     }
 }

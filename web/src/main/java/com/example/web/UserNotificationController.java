@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.example.common.dto.UserNotificationDto;
+import com.example.common.dto.UserNotificationResponseDto;
 import com.example.service.UserNotificationService;
 
 @RestController
@@ -16,7 +16,7 @@ public class UserNotificationController {
     private UserNotificationService notificationService;
 
     @GetMapping
-    public List<UserNotificationDto> getUserNotifications(Pageable pageable) {
+    public List<UserNotificationResponseDto> getUserNotifications(Pageable pageable) {
         return notificationService.getAllUserNotifications(pageable);
     }
 
