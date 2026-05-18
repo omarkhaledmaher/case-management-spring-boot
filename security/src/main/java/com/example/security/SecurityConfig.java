@@ -28,11 +28,11 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(
                         req -> req
-                                .requestMatchers("/", "/error", "/api/auth/**", "/api/test/**", "/chat/**",
+                                .requestMatchers("/", "/error", "/api/auth/**", "/api/dev/**", "/chat/**",
                                         "/index.html", "/**/*.js", "/swagger-ui/**", "/v3/api-docs/**")
                                 .permitAll()
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .anyRequest().authenticated());
+                                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                                .anyRequest().authenticated());
 
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

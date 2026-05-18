@@ -20,7 +20,7 @@ import com.example.service.RoleService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping({"/api/admin/roles", "/api/test/roles"})
+@RequestMapping("/api/admin/roles")
 public class RoleController {
     @Autowired
     private RoleService roleService;

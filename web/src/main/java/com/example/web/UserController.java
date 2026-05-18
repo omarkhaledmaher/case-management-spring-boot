@@ -20,7 +20,7 @@ import com.example.service.UserService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping({"/api/admin/users", "/api/test/users"})
+@RequestMapping("/api/admin/users")
 public class UserController {
     @Autowired
     private UserService userService;
