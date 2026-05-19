@@ -1,4 +1,4 @@
-package com.example.web;
+package com.example.web.controller;
 
 import java.net.URI;
 import org.springframework.context.annotation.Profile;

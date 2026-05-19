@@ -1,4 +1,4 @@
-package com.example.web;
+package com.example.web.controller;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
