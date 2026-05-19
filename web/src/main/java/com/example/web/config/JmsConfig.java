@@ -1,4 +1,4 @@
-package com.example.application.config;
+package com.example.web.config;
 
 import org.springframework.boot.jms.autoconfigure.DefaultJmsListenerContainerFactoryConfigurer;
 import org.springframework.context.annotation.Bean;

@@ -30,7 +30,6 @@
     <module>notification</module>
     <module>security</module>
     <module>web</module>
-    <module>application</module>
   </modules>
 
   <dependencyManagement>
