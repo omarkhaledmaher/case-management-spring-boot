@@ -26,6 +26,7 @@ import com.example.service.ChatMessageService;
 import com.example.service.ChatService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
@@ -56,8 +57,8 @@ public class ChatController {
     @Operation(summary = "Create a new chat",
             description = "Creates a new chat for the specified case with the given participants")
     @PostMapping
-    public ResponseEntity<ChatResponseDto> createChat(@PathVariable Long caseId, @RequestBody ChatRequestDto dto,
-                    UriComponentsBuilder ucb) {
+    public ResponseEntity<ChatResponseDto> createChat(@PathVariable Long caseId, @Valid @RequestBody ChatRequestDto dto,
+            UriComponentsBuilder ucb) {
         ChatResponseDto createdChat = chatService.createChat(caseId, dto.participantIds());
         URI location = ucb.path("/api/cases/{caseId}/chats/{id}").buildAndExpand(caseId, createdChat.id()).toUri();
 
@@ -68,8 +69,9 @@ public class ChatController {
             description = "User must be a participant in the chat")
     @MessageMapping("/chat/{chatId}/send")
     @SendTo("/topic/chat/{chatId}")
-    public ChatMessageResponseDto createMessage(@DestinationVariable Long chatId, @Payload ChatMessageRequestDto dto,
-            Principal principal) {
+    public ChatMessageResponseDto createMessage(@DestinationVariable Long chatId,
+            @Valid @Payload ChatMessageRequestDto dto, Principal principal) {
+
         return chatMessageService.createChatMessage(chatId, dto, principal);
     }
 }

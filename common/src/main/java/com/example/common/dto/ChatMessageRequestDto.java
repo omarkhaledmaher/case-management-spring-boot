@@ -1,5 +1,7 @@
 package com.example.common.dto;
 
-public record ChatMessageRequestDto(String text) {
+import jakarta.validation.constraints.NotBlank;
+
+public record ChatMessageRequestDto(@NotBlank(message = "Message cannot be blank") String text) {
 
 }

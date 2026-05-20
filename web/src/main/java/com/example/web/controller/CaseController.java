@@ -20,6 +20,7 @@ import com.example.common.dto.CaseResponseDto;
 import com.example.service.CaseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/cases")
@@ -52,7 +53,8 @@ public class CaseController {
     @Operation(summary = "Creates a new case", description = "Requires CASE_CREATE authority")
     @PreAuthorize("hasAuthority('CASE_CREATE')")
     @PostMapping
-    public ResponseEntity<CaseResponseDto> createCase(@RequestBody CaseRequestDto dto, UriComponentsBuilder ucb) {
+    public ResponseEntity<CaseResponseDto> createCase(@Valid @RequestBody CaseRequestDto dto,
+            UriComponentsBuilder ucb) {
         CaseResponseDto createdCase = caseService.createCase(dto);
         URI location = ucb.path("/api/cases/{id}").buildAndExpand(createdCase.id()).toUri();
         return ResponseEntity.created(location).body(createdCase);
