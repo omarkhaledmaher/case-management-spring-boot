@@ -20,9 +20,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import com.example.common.exceptions.DuplicateRoleException;
 import com.example.common.exceptions.DuplicateUsernameException;
 import com.example.common.exceptions.ResourceNotFoundException;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -30,61 +27,43 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<Object> handleAuthentication(AuthenticationException ex) {
-        logger.debug("Authentication error: {}", ex.getMessage());
+        logger.info("Authentication error: {}", ex.getMessage());
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(AuthorizationDeniedException.class)
     public ResponseEntity<Object> handleAuthorizationDenied(AuthorizationDeniedException ex) {
-        logger.debug("Authorization error: {}", ex.getMessage());
+        logger.warn("Authorization error: {}", ex.getMessage());
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<Object> handleBadCredential(BadCredentialsException ex) {
-        logger.debug("Bad credentials: {}", ex.getMessage());
+        logger.info("Bad credentials: {}", ex.getMessage());
         return new ResponseEntity<>("Email or password is incorrect", HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(MalformedJwtException.class)
-    public ResponseEntity<Object> handleMalformedJwt(MalformedJwtException ex) {
-        logger.debug("Malformed JWT: {}", ex.getMessage());
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(ExpiredJwtException.class)
-    public ResponseEntity<Object> handleExpiredJwt(ExpiredJwtException ex) {
-        logger.debug("Expired JWT: {}", ex.getMessage());
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler(UnsupportedJwtException.class)
-    public ResponseEntity<Object> handleUnsupportedJwt(UnsupportedJwtException ex) {
-        logger.debug("Unsupported JWT: {}", ex.getMessage());
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(DuplicateUsernameException.class)
     public ResponseEntity<Object> handleDuplicateUsername(DuplicateUsernameException ex) {
-        logger.debug("Duplicate username: {}", ex.getMessage());
+        logger.info("Duplicate username: {}", ex.getMessage());
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(DuplicateRoleException.class)
     public ResponseEntity<Object> handleDuplicateRole(DuplicateRoleException ex) {
-        logger.debug("Duplicate role: {}", ex.getMessage());
+        logger.info("Duplicate role: {}", ex.getMessage());
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Object> handleResourceNotFound(ResourceNotFoundException ex) {
-        logger.debug("Resource not found: {}", ex.getMessage());
+        logger.info("Resource not found: {}", ex.getMessage());
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Object> handleIllegalArgument(IllegalArgumentException ex) {
-        logger.debug("Illegal argument: {}", ex.getMessage());
+        logger.info("Illegal argument: {}", ex.getMessage());
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
@@ -97,7 +76,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
-        logger.debug("Invalid Method Argument: {}", ex.getMessage());
+        logger.info("Invalid Method Argument: {}", ex.getMessage());
 
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
