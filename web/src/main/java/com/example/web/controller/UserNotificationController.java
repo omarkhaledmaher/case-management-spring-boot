@@ -10,10 +10,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import com.example.common.dto.UserNotificationResponseDto;
 import com.example.service.UserNotificationService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 @RestController
 @RequestMapping("/api/notifications")
+@Tag(name = "User Notifications", description = "Operations related to user notifications and real-time updates")
 public class UserNotificationController {
     @Autowired
     private UserNotificationService notificationService;

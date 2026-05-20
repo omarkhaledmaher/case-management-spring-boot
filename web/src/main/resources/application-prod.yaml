@@ -8,3 +8,8 @@ spring:
     database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
       ddl-auto: create
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false

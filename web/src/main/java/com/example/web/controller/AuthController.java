@@ -10,10 +10,12 @@ import com.example.common.dto.JwtDto;
 import com.example.common.dto.LoginDto;
 import com.example.common.dto.RegisterDto;
 import com.example.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name = "Authentication", description = "User registration and login")
 public class AuthController {
     @Autowired
     private UserService userService;

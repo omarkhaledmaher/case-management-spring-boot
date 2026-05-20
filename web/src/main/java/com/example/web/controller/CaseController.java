@@ -17,9 +17,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.example.common.dto.CaseRequestDto;
 import com.example.common.dto.CaseResponseDto;
 import com.example.service.CaseService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/cases")
+@Tag(name = "Cases", description = "Operations related to case management")
 public class CaseController {
     @Autowired
     private CaseService caseService;

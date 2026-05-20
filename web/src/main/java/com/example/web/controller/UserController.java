@@ -18,11 +18,13 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.example.common.dto.UserRequestDto;
 import com.example.common.dto.UserResponseDto;
 import com.example.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @PreAuthorize("hasRole('ADMIN')")
 @RestController
 @RequestMapping("/api/users")
+@Tag(name = "Users", description = "Operations related to user account management and administration")
 public class UserController {
     @Autowired
     private UserService userService;

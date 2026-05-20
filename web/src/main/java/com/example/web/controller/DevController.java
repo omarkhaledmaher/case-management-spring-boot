@@ -14,6 +14,7 @@ import com.example.common.dto.UserRequestDto;
 import com.example.common.dto.UserResponseDto;
 import com.example.service.RoleService;
 import com.example.service.UserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
@@ -21,6 +22,7 @@ import lombok.AllArgsConstructor;
 @Profile("dev")
 @RequestMapping("/api/dev")
 @AllArgsConstructor
+@Tag(name = "Development", description = "Endpoints for development and testing purposes only")
 public class DevController {
     private final UserService userService;
     private final RoleService roleService;

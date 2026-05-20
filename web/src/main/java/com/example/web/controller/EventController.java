@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.model.Event;
 import com.example.service.EventService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @PreAuthorize("hasRole('ADMIN')")
 @RestController
 @RequestMapping("/api/events")
+@Tag(name = "Events", description = "Retrieval of system events")
 public class EventController {
     @Autowired
     private EventService eventService;

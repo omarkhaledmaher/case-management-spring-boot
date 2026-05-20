@@ -18,11 +18,13 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.example.common.dto.RoleRequestDto;
 import com.example.common.dto.RoleResponseDto;
 import com.example.service.RoleService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @PreAuthorize("hasRole('ADMIN')")
 @RestController
 @RequestMapping("/api/roles")
+@Tag(name = "Roles", description = "Operations related to role and privilege management")
 public class RoleController {
     @Autowired
     private RoleService roleService;

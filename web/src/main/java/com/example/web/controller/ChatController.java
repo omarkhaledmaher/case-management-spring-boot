@@ -23,12 +23,14 @@ import com.example.common.dto.ChatRequestDto;
 import com.example.common.dto.ChatResponseDto;
 import com.example.service.ChatMessageService;
 import com.example.service.ChatService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 
 @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 @RestController
 @RequestMapping("/api/cases/{caseId}/chats")
 @AllArgsConstructor
+@Tag(name = "Chats", description = "Operations related to case chats and messaging")
 public class ChatController {
     private final ChatService chatService;
     private final ChatMessageService chatMessageService;
