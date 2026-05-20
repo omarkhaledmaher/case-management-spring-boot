@@ -3,6 +3,7 @@ package com.example.web.controller;
 import java.net.URI;
 import java.security.Principal;
 import java.util.List;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -42,7 +43,8 @@ public class ChatController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ChatResponseDto>> getAllChats(@PathVariable Long caseId, Pageable pageable) {
+    public ResponseEntity<List<ChatResponseDto>> getAllChats(@PathVariable Long caseId,
+            @ParameterObject Pageable pageable) {
         List<ChatResponseDto> chats = chatService.getAllChatsByCaseId(caseId, pageable);
         return ResponseEntity.ok(chats);
     }

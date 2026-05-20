@@ -2,6 +2,7 @@ package com.example.web.controller;
 
 import java.net.URI;
 import java.util.List;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +37,7 @@ public class RoleController {
     }
 
     @GetMapping
-    public ResponseEntity<List<RoleResponseDto>> getAllRoles(Pageable pageable) {
+    public ResponseEntity<List<RoleResponseDto>> getAllRoles(@ParameterObject Pageable pageable) {
         List<RoleResponseDto> roles = roleService.getAllRoles(pageable);
         return ResponseEntity.ok(roles);
     }

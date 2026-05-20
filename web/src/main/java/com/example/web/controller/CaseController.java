@@ -2,6 +2,7 @@ package com.example.web.controller;
 
 import java.net.URI;
 import java.util.List;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -33,13 +34,13 @@ public class CaseController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CaseResponseDto>> getAllCases(Pageable pageable) {
+    public ResponseEntity<List<CaseResponseDto>> getAllCases(@ParameterObject Pageable pageable) {
         return ResponseEntity.ok(caseService.getAllCases(pageable));
     }
 
     @GetMapping("/search")
     public ResponseEntity<List<CaseResponseDto>> searchCases(@RequestParam(required = false) String searchTerm,
-            Pageable pageable) {
+            @ParameterObject Pageable pageable) {
         return ResponseEntity.ok(caseService.searchCases(searchTerm, pageable));
     }
 

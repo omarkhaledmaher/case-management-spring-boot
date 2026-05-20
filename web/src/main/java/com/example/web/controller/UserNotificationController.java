@@ -1,6 +1,7 @@
 package com.example.web.controller;
 
 import java.util.List;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,7 +27,7 @@ public class UserNotificationController {
     }
 
     @GetMapping
-    public List<UserNotificationResponseDto> getUserNotifications(Pageable pageable) {
+    public List<UserNotificationResponseDto> getUserNotifications(@ParameterObject Pageable pageable) {
         return notificationService.getAllUserNotifications(pageable);
     }
 
