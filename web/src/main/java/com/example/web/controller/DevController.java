@@ -14,6 +14,7 @@ import com.example.common.dto.UserRequestDto;
 import com.example.common.dto.UserResponseDto;
 import com.example.service.RoleService;
 import com.example.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -27,6 +28,7 @@ public class DevController {
     private final UserService userService;
     private final RoleService roleService;
 
+    @Operation(summary = "Create a test user")
     @PostMapping("/users")
     public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserRequestDto dto,
             UriComponentsBuilder ucb) {
@@ -35,6 +37,7 @@ public class DevController {
         return ResponseEntity.created(location).body(createdUser);
     }
 
+    @Operation(summary = "Create a test role", description = "If privileges do not exist, they will be created.")
     @PostMapping("/roles")
     public ResponseEntity<RoleResponseDto> createRole(@Valid @RequestBody RoleRequestDto dto,
             UriComponentsBuilder ucb) {

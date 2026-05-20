@@ -19,6 +19,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.example.common.dto.RoleRequestDto;
 import com.example.common.dto.RoleResponseDto;
 import com.example.service.RoleService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
@@ -30,18 +31,24 @@ public class RoleController {
     @Autowired
     private RoleService roleService;
 
+    @Operation(summary = "Gets role by ID")
     @GetMapping("/{id}")
     public ResponseEntity<RoleResponseDto> getRoleById(@PathVariable Long id) {
         RoleResponseDto role = roleService.getRoleById(id);
         return ResponseEntity.ok(role);
     }
 
+    @Operation(summary = "Gets all roles",
+            description = "With optional pagination")
     @GetMapping
     public ResponseEntity<List<RoleResponseDto>> getAllRoles(@ParameterObject Pageable pageable) {
         List<RoleResponseDto> roles = roleService.getAllRoles(pageable);
         return ResponseEntity.ok(roles);
     }
 
+    @Operation(
+            summary = "Creates a new role",
+            description = " If privileges do not exist, they will be created.")
     @PostMapping
     public ResponseEntity<RoleResponseDto> createRole(@Valid @RequestBody RoleRequestDto dto,
             UriComponentsBuilder ucb) {
@@ -50,12 +57,17 @@ public class RoleController {
         return ResponseEntity.created(location).body(createdRole);
     }
 
+    @Operation(summary = "Fully updates role",
+            description = "If privileges do not exist, they will be created.")
     @PutMapping("/{id}")
     public ResponseEntity<RoleResponseDto> updateRole(@PathVariable Long id, @Valid @RequestBody RoleRequestDto dto) {
         roleService.updateRole(id, dto);
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(
+            summary = "Deletes role by ID",
+            description = "Does not delete any privileges")
     @DeleteMapping("/{id}")
     public ResponseEntity<RoleResponseDto> deleteRole(@PathVariable Long id) {
         roleService.deleteRole(id);

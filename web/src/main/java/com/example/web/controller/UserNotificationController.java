@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import com.example.common.dto.UserNotificationResponseDto;
 import com.example.service.UserNotificationService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
@@ -21,11 +22,16 @@ public class UserNotificationController {
     @Autowired
     private UserNotificationService notificationService;
 
+    @Operation(summary = "Subscribes user to notifications",
+            description = "Subscribes the user to real-time notifications using SSE")
     @GetMapping("/subscribe")
     public SseEmitter subscribeToNotifications() {
         return notificationService.subscribe();
     }
 
+    @Operation(
+            summary = "Gets user's notifications",
+            description = "Received notifications will be marked as read")
     @GetMapping
     public List<UserNotificationResponseDto> getUserNotifications(@ParameterObject Pageable pageable) {
         return notificationService.getAllUserNotifications(pageable);

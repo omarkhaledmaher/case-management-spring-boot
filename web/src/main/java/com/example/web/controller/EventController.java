@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.model.Event;
 import com.example.service.EventService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @PreAuthorize("hasRole('ADMIN')")
@@ -22,12 +23,14 @@ public class EventController {
     @Autowired
     private EventService eventService;
 
+    @Operation(summary = "Gets event by ID")
     @GetMapping("/{id}")
     public ResponseEntity<Event> getEventById(@PathVariable Long id) {
         Event event = eventService.getEvent(id);
         return ResponseEntity.ok(event);
     }
 
+    @Operation(summary = "Gets all events", description = "With optional pagination")
     @GetMapping
     public ResponseEntity<List<Event>> getAllEvents(@ParameterObject Pageable pageable) {
         List<Event> events = eventService.getAllEvents(pageable);

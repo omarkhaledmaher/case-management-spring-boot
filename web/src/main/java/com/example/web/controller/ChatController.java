@@ -24,6 +24,7 @@ import com.example.common.dto.ChatRequestDto;
 import com.example.common.dto.ChatResponseDto;
 import com.example.service.ChatMessageService;
 import com.example.service.ChatService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 
@@ -36,12 +37,15 @@ public class ChatController {
     private final ChatService chatService;
     private final ChatMessageService chatMessageService;
 
+    @Operation(summary = "Gets chat by ID", description = "User must be a participant in the chat")
     @GetMapping("/{chatId}")
     public ResponseEntity<ChatResponseDto> getChat(@PathVariable Long caseId, @PathVariable Long chatId) {
         ChatResponseDto chat = chatService.getChatById(chatId);
         return ResponseEntity.ok(chat);
     }
 
+    @Operation(summary = "Gets all chats for a case",
+            description = "Returns all chats for the specified case that the user is a participant in with optional pagination")
     @GetMapping
     public ResponseEntity<List<ChatResponseDto>> getAllChats(@PathVariable Long caseId,
             @ParameterObject Pageable pageable) {
@@ -49,6 +53,8 @@ public class ChatController {
         return ResponseEntity.ok(chats);
     }
 
+    @Operation(summary = "Create a new chat",
+            description = "Creates a new chat for the specified case with the given participants")
     @PostMapping
     public ResponseEntity<ChatResponseDto> createChat(@PathVariable Long caseId, @RequestBody ChatRequestDto dto,
                     UriComponentsBuilder ucb) {
@@ -58,6 +64,8 @@ public class ChatController {
         return ResponseEntity.created(location).body(createdChat);
     }
 
+    @Operation(summary = "Sends a message to the specified chat",
+            description = "User must be a participant in the chat")
     @MessageMapping("/chat/{chatId}/send")
     @SendTo("/topic/chat/{chatId}")
     public ChatMessageResponseDto createMessage(@DestinationVariable Long chatId, @Payload ChatMessageRequestDto dto,

@@ -10,6 +10,7 @@ import com.example.common.dto.JwtDto;
 import com.example.common.dto.LoginDto;
 import com.example.common.dto.RegisterDto;
 import com.example.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
@@ -20,11 +21,14 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
+    @Operation(summary = "Register a new user",
+            description = "Username must be unique. Returns JWT token if successful")
     @PostMapping("/register")
     public ResponseEntity<JwtDto> register(@Valid @RequestBody RegisterDto registerDto) {
         return ResponseEntity.ok(userService.registerUser(registerDto));
     }
 
+    @Operation(summary = "Authenticate user", description = "Returns JWT token if successful")
     @PostMapping("/login")
     public ResponseEntity<JwtDto> login(@Valid @RequestBody LoginDto loginDto) {
         return ResponseEntity.ok(userService.authenticate(loginDto));
