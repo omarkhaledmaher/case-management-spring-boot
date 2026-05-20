@@ -18,5 +18,6 @@ spring:
     user: ${mq.username}
     password: ${mq.password}
 logging:
-  level:
-    "[org.springframework.security]": TRACE
+  file:
+    name: logs/app.log
+    path: logs

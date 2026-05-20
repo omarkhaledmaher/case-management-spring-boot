@@ -13,3 +13,6 @@ springdoc:
     enabled: false
   swagger-ui:
     enabled: false
+logging:
+  level:
+    "[org.springframework.security]": INFO
