@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.Objects;
 import org.hibernate.annotations.CreationTimestamp;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,7 +25,7 @@ public class ChatMessage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User sender;
 
@@ -33,7 +34,7 @@ public class ChatMessage {
     @CreationTimestamp
     private Instant timestamp;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_id")
     private Chat chat;
 
