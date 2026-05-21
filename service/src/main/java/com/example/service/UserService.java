@@ -1,7 +1,9 @@
 package com.example.service;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -97,7 +99,7 @@ public class UserService {
             throw new DuplicateUsernameException("Account with username " + dto.username() + " already exists");
         }
 
-        List<Role> roles = roleRepository.findAllByNameIn(dto.roleNames());
+        Set<Role> roles = new HashSet<>(roleRepository.findAllByNameIn(dto.roleNames()));
         if (roles.size() != dto.roleNames().size()) {
             throw new ResourceNotFoundException("One or more roles not found");
         }

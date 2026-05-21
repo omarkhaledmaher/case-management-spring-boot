@@ -1,5 +1,6 @@
 package com.example.mapper;
 
+import java.util.HashSet;
 import java.util.List;
 import org.springframework.stereotype.Component;
 import com.example.common.dto.ChatMessageResponseDto;
@@ -20,8 +21,8 @@ public class ChatMapper {
     public Chat toChat(Case chatCase, List<User> participants, List<ChatMessage> messages) {
         Chat chat = new Chat();
         chat.setChatCase(chatCase);
-        chat.setParticipants(participants);
-        chat.setMessages(messages);
+        chat.setParticipants(new HashSet<>(participants));
+        chat.setMessages(new HashSet<>(messages));
         return chat;
     }
 

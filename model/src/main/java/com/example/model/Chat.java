@@ -1,8 +1,8 @@
 package com.example.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -36,10 +36,10 @@ public class Chat {
             name = "chat_participants",
             joinColumns = @JoinColumn(name = "chat_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private List<User> participants = new ArrayList<>();
+    private Set<User> participants = new HashSet<>();
 
     @OneToMany(mappedBy = "chat")
-    private List<ChatMessage> messages = new ArrayList<>();
+    private Set<ChatMessage> messages = new HashSet<>();
 
     @Override
     public int hashCode() {

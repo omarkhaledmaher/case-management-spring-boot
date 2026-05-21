@@ -1,6 +1,7 @@
 package com.example.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -61,7 +62,7 @@ public class RoleService {
         }
         role.setName(dto.name());
         List<Privilege> privileges = getPrivileges(dto.privileges());
-        role.setPrivileges(privileges);
+        role.setPrivileges(new HashSet<>(privileges));
 
         RoleResponseDto responseDto = mapper.toDto(role);
         eventPublisher.publishEvent(DatabaseOperation.UPDATED, "Role", "updateRole", responseDto);

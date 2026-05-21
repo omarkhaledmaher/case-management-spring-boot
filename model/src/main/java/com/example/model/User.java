@@ -1,8 +1,8 @@
 package com.example.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -38,13 +38,13 @@ public class User {
                     name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(
                     name = "role_id", referencedColumnName = "id"))
-    private List<Role> roles = new ArrayList<>();
+    private Set<Role> roles = new HashSet<>();
 
     @ManyToMany(mappedBy = "participants")
-    private List<Chat> chats = new ArrayList<>();
+    private Set<Chat> chats = new HashSet<>();
 
     @ManyToMany(mappedBy = "assignedUsers")
-    private List<Case> assignedCases = new ArrayList<>();
+    private Set<Case> assignedCases = new HashSet<>();
 
     @Override
     public int hashCode() {

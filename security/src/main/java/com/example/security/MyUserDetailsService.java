@@ -59,6 +59,6 @@ public class MyUserDetailsService implements UserDetailsService {
                 user.getId(),
                 user.getUsername(),
                 user.getPassword(),
-                getAuthorities(user.getRoles()));
+                getAuthorities(user.getRoles().stream().toList()));
     }
 }

@@ -1,6 +1,6 @@
 package com.example.service;
 
-import java.util.List;
+import java.util.Set;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,7 +51,7 @@ public class ChatMessageService {
     }
 
     private void publishChatNotification(Chat chat, String username) {
-        List<User> participants = chat.getParticipants();
+        Set<User> participants = chat.getParticipants();
         Case chatCase = chat.getChatCase();
         participants.stream()
                 .filter(p -> !p.getUsername().equals(username))

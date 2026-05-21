@@ -1,9 +1,9 @@
 package com.example.model;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import com.example.common.enums.CaseStatus;
@@ -60,10 +60,10 @@ public class Case {
                     @JoinColumn(name = "case_id", referencedColumnName = "id"),
             },
             inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"))
-    private List<User> assignedUsers = new ArrayList<>();
+    private Set<User> assignedUsers = new HashSet<>();
 
     @OneToMany(mappedBy = "chatCase")
-    private List<Chat> chats = new ArrayList<>();
+    private Set<Chat> chats = new HashSet<>();
 
     @Override
     public int hashCode() {

@@ -1,5 +1,6 @@
 package com.example.mapper;
 
+import java.util.HashSet;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,7 +27,7 @@ public class UserMapper {
         User user = new User();
         user.setUsername(dto.username());
         user.setPassword(encodedPassword);
-        user.setRoles(roles);
+        user.setRoles(new HashSet<>(roles));
         return user;
     }
 
@@ -34,7 +35,7 @@ public class UserMapper {
         User user = new User();
         user.setUsername(dto.username());
         user.setPassword(encodedPassword);
-        user.setRoles(roles);
+        user.setRoles(new HashSet<>(roles));
         return user;
     }
 

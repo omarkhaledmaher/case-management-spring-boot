@@ -1,5 +1,6 @@
 package com.example.mapper;
 
+import java.util.HashSet;
 import java.util.List;
 import org.springframework.stereotype.Component;
 import com.example.common.dto.CaseDetailsDto;
@@ -27,8 +28,8 @@ public class CaseMapper {
         caseEntity.setDescription(dto.description());
         caseEntity.setDetails(toCaseDetails(dto.details()));
         caseEntity.setStatus(dto.status());
-        caseEntity.setAssignedUsers(assignedUsers);
-        caseEntity.setChats(chats);
+        caseEntity.setAssignedUsers(new HashSet<>(assignedUsers));
+        caseEntity.setChats(new HashSet<>(chats));
         return caseEntity;
     }
 

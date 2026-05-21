@@ -2,6 +2,7 @@ package com.example.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,7 +54,7 @@ public class ChatService {
 
         List<User> participants = userRepository.findAllById(participantIds);
 
-        List<User> caseUsers = chatCase.getAssignedUsers();
+        Set<User> caseUsers = chatCase.getAssignedUsers();
         if (!caseUsers.containsAll(participants)) {
             throw new IllegalArgumentException("One or more participants are not assigned to this case");
         }
