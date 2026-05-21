@@ -29,7 +29,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
-@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 @RestController
 @RequestMapping("/api/cases/{caseId}/chats")
 @AllArgsConstructor
@@ -40,6 +39,7 @@ public class ChatController {
 
     @Operation(summary = "Gets chat by ID", description = "User must be a participant in the chat")
     @GetMapping("/{chatId}")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<ChatResponseDto> getChat(@PathVariable Long caseId, @PathVariable Long chatId) {
         ChatResponseDto chat = chatService.getChatById(chatId);
         return ResponseEntity.ok(chat);
@@ -48,6 +48,7 @@ public class ChatController {
     @Operation(summary = "Gets all chats for a case",
             description = "Returns all chats for the specified case that the user is a participant in with optional pagination")
     @GetMapping
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<List<ChatResponseDto>> getAllChats(@PathVariable Long caseId,
             @ParameterObject Pageable pageable) {
         List<ChatResponseDto> chats = chatService.getAllChatsByCaseId(caseId, pageable);
@@ -57,6 +58,7 @@ public class ChatController {
     @Operation(summary = "Create a new chat",
             description = "Creates a new chat for the specified case with the given participants")
     @PostMapping
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<ChatResponseDto> createChat(@PathVariable Long caseId, @Valid @RequestBody ChatRequestDto dto,
             UriComponentsBuilder ucb) {
         ChatResponseDto createdChat = chatService.createChat(caseId, dto.participantIds());

@@ -14,7 +14,6 @@ import com.example.service.UserNotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 @RestController
 @RequestMapping("/api/notifications")
 @Tag(name = "User Notifications", description = "Operations related to user notifications and real-time updates")
@@ -25,6 +24,7 @@ public class UserNotificationController {
     @Operation(summary = "Subscribes user to notifications",
             description = "Subscribes the user to real-time notifications using SSE")
     @GetMapping("/subscribe")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public SseEmitter subscribeToNotifications() {
         return notificationService.subscribe();
     }
@@ -33,6 +33,7 @@ public class UserNotificationController {
             summary = "Gets user's notifications",
             description = "Received notifications will be marked as read")
     @GetMapping
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public List<UserNotificationResponseDto> getUserNotifications(@ParameterObject Pageable pageable) {
         return notificationService.getAllUserNotifications(pageable);
     }

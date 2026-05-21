@@ -23,7 +23,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
-@PreAuthorize("hasRole('ADMIN')")
 @RestController
 @RequestMapping("/api/roles")
 @Tag(name = "Roles", description = "Operations related to role and privilege management")
@@ -33,6 +32,7 @@ public class RoleController {
 
     @Operation(summary = "Gets role by ID")
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<RoleResponseDto> getRoleById(@PathVariable Long id) {
         RoleResponseDto role = roleService.getRoleById(id);
         return ResponseEntity.ok(role);
@@ -41,6 +41,7 @@ public class RoleController {
     @Operation(summary = "Gets all roles",
             description = "With optional pagination")
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<RoleResponseDto>> getAllRoles(@ParameterObject Pageable pageable) {
         List<RoleResponseDto> roles = roleService.getAllRoles(pageable);
         return ResponseEntity.ok(roles);
@@ -50,6 +51,7 @@ public class RoleController {
             summary = "Creates a new role",
             description = " If privileges do not exist, they will be created.")
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<RoleResponseDto> createRole(@Valid @RequestBody RoleRequestDto dto,
             UriComponentsBuilder ucb) {
         RoleResponseDto createdRole = roleService.createRole(dto);
@@ -60,6 +62,7 @@ public class RoleController {
     @Operation(summary = "Fully updates role",
             description = "If privileges do not exist, they will be created.")
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<RoleResponseDto> updateRole(@PathVariable Long id, @Valid @RequestBody RoleRequestDto dto) {
         roleService.updateRole(id, dto);
         return ResponseEntity.noContent().build();
@@ -69,6 +72,7 @@ public class RoleController {
             summary = "Deletes role by ID",
             description = "Does not delete any privileges")
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<RoleResponseDto> deleteRole(@PathVariable Long id) {
         roleService.deleteRole(id);
         return ResponseEntity.noContent().build();

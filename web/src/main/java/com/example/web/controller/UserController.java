@@ -23,7 +23,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
-@PreAuthorize("hasRole('ADMIN')")
 @RestController
 @RequestMapping("/api/users")
 @Tag(name = "Users", description = "Operations related to user account management and administration")
@@ -33,18 +32,21 @@ public class UserController {
 
     @Operation(summary = "Gets user by ID")
     @GetMapping("/{id}")
+    @PreAuthorize("#id == authentication.principal.id or hasRole('ADMIN')")
     public ResponseEntity<UserResponseDto> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.getUser(id));
     }
 
     @Operation(summary = "Gets all users", description = "With optional pagination")
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserResponseDto>> getAllUsers(@ParameterObject Pageable pageable) {
         return ResponseEntity.ok(userService.getAllUsers(pageable));
     }
 
     @Operation(summary = "Creates a new user")
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserRequestDto dto,
             UriComponentsBuilder ucb) {
         UserResponseDto createdUser = userService.createUser(dto);
@@ -54,6 +56,7 @@ public class UserController {
 
     @Operation(summary = "Fully updates user by ID", description = "User must exist")
     @PutMapping("/{id}")
+    @PreAuthorize("#id == authentication.principal.id or hasRole('ADMIN')")
     public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long id, @Valid @RequestBody UserRequestDto dto) {
         userService.updateUser(id, dto);
         return ResponseEntity.noContent().build();
@@ -61,6 +64,7 @@ public class UserController {
 
     @Operation(summary = "Deletes user by ID")
     @DeleteMapping("/{id}")
+    @PreAuthorize("#id == authentication.principal.id or hasRole('ADMIN')")
     public ResponseEntity<UserResponseDto> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();

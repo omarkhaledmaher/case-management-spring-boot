@@ -15,7 +15,6 @@ import com.example.service.EventService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@PreAuthorize("hasRole('ADMIN')")
 @RestController
 @RequestMapping("/api/events")
 @Tag(name = "Events", description = "Retrieval of system events")
@@ -25,6 +24,7 @@ public class EventController {
 
     @Operation(summary = "Gets event by ID")
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Event> getEventById(@PathVariable Long id) {
         Event event = eventService.getEvent(id);
         return ResponseEntity.ok(event);
@@ -32,6 +32,7 @@ public class EventController {
 
     @Operation(summary = "Gets all events", description = "With optional pagination")
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<Event>> getAllEvents(@ParameterObject Pageable pageable) {
         List<Event> events = eventService.getAllEvents(pageable);
         return ResponseEntity.ok(events);

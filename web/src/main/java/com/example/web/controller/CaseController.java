@@ -31,6 +31,7 @@ public class CaseController {
 
     @Operation(summary = "Gets case by ID", description = "User must have access to the case")
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and hasAuthority('CASE_READ'))")
     public ResponseEntity<CaseResponseDto> getCase(@PathVariable Long id) {
         CaseResponseDto caseResponse = caseService.getCaseById(id);
         return ResponseEntity.ok(caseResponse);
@@ -39,19 +40,21 @@ public class CaseController {
     @Operation(summary = "Gets all cases",
             description = "Returns all cases user has access to, with optional search term for filtering")
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and hasAuthority('CASE_READ'))")
     public ResponseEntity<List<CaseResponseDto>> getAllCases(@ParameterObject Pageable pageable) {
         return ResponseEntity.ok(caseService.getAllCases(pageable));
     }
 
     @Operation(summary = "Searches cases", description = "Searches based on case details")
     @GetMapping("/search")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and hasAuthority('CASE_READ'))")
     public ResponseEntity<List<CaseResponseDto>> searchCases(@RequestParam(required = false) String searchTerm,
             @ParameterObject Pageable pageable) {
         return ResponseEntity.ok(caseService.searchCases(searchTerm, pageable));
     }
 
     @Operation(summary = "Creates a new case", description = "Requires CASE_CREATE authority")
-    @PreAuthorize("hasAuthority('CASE_CREATE')")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and hasAuthority('CASE_CREATE'))")
     @PostMapping
     public ResponseEntity<CaseResponseDto> createCase(@Valid @RequestBody CaseRequestDto dto,
             UriComponentsBuilder ucb) {
