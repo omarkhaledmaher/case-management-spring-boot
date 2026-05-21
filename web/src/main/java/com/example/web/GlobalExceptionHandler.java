@@ -2,8 +2,6 @@ package com.example.web;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -20,50 +18,51 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import com.example.common.exceptions.DuplicateRoleException;
 import com.example.common.exceptions.DuplicateUsernameException;
 import com.example.common.exceptions.ResourceNotFoundException;
+import lombok.extern.log4j.Log4j2;
 
 @RestControllerAdvice
+@Log4j2
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
-    private static final Logger logger = LogManager.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<Object> handleAuthentication(AuthenticationException ex) {
-        logger.info("Authentication error: {}", ex.getMessage());
+        log.info("Authentication error: {}", ex.getMessage());
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(AuthorizationDeniedException.class)
     public ResponseEntity<Object> handleAuthorizationDenied(AuthorizationDeniedException ex) {
-        logger.warn("Authorization error: {}", ex.getMessage());
+        log.warn("Authorization error: {}", ex.getMessage());
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<Object> handleBadCredential(BadCredentialsException ex) {
-        logger.info("Bad credentials: {}", ex.getMessage());
+        log.info("Bad credentials: {}", ex.getMessage());
         return new ResponseEntity<>("Email or password is incorrect", HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(DuplicateUsernameException.class)
     public ResponseEntity<Object> handleDuplicateUsername(DuplicateUsernameException ex) {
-        logger.info("Duplicate username: {}", ex.getMessage());
+        log.info("Duplicate username: {}", ex.getMessage());
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(DuplicateRoleException.class)
     public ResponseEntity<Object> handleDuplicateRole(DuplicateRoleException ex) {
-        logger.info("Duplicate role: {}", ex.getMessage());
+        log.info("Duplicate role: {}", ex.getMessage());
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Object> handleResourceNotFound(ResourceNotFoundException ex) {
-        logger.info("Resource not found: {}", ex.getMessage());
+        log.info("Resource not found: {}", ex.getMessage());
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Object> handleIllegalArgument(IllegalArgumentException ex) {
-        logger.info("Illegal argument: {}", ex.getMessage());
+        log.info("Illegal argument: {}", ex.getMessage());
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
@@ -76,15 +75,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
-        logger.info("Invalid Method Argument: {}", ex.getMessage());
+        log.info("Invalid Method Argument: {}", ex.getMessage());
 
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
     ResponseEntity<Object> handleGenericException(Exception ex, WebRequest request) {
-        logger.error("An unexpected error has occurred. Name: {}, Message: {}", ex.getClass().getSimpleName(),
-                ex.getMessage(), ex);
+        log.error("An unexpected error has occurred. Name: {}, Message: {}", ex.getClass().getSimpleName(),
+                        ex.getMessage(), ex);
         return super.handleExceptionInternal(ex, "An unexpected error has occurred",
                 new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
