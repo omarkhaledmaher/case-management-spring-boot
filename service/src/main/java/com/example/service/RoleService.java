@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,8 +35,9 @@ public class RoleService {
     }
 
     public List<RoleResponseDto> getAllRoles(Pageable pageable) {
+        Page<Long> roleIds = roleRepository.findAllIds(pageable);
         return roleRepository
-                .findAll(pageable).stream()
+                .findAllById(roleIds.getContent()).stream()
                 .map(mapper::toDto).toList();
     }
 

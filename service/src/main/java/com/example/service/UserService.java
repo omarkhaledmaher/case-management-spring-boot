@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -67,7 +68,8 @@ public class UserService {
     }
 
     public List<UserResponseDto> getAllUsers(Pageable pageable) {
-        return repository.findAll(pageable).stream()
+        Page<Long> userIds = repository.findAllIds(pageable);
+        return repository.findAllById(userIds.getContent()).stream()
                 .map(mapper::toDto).toList();
     }
 
