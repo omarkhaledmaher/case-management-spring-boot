@@ -2,6 +2,7 @@ package com.example.security;
 
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.MessageDeliveryException;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
@@ -25,20 +26,24 @@ public class WebSocketSecurityInterceptor implements ChannelInterceptor {
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
             String headerAuth = accessor.getFirstNativeHeader("Authorization");
 
-            if (headerAuth != null && headerAuth.startsWith("Bearer ")) {
-                String jwt = headerAuth.substring(7);
-
-                if (jwtUtils.validateJwtToken(jwt)) {
-                    String username = jwtUtils.getUsernameFromJwtToken(jwt);
-                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
-                    UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-
-                    accessor.setUser(authentication);
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                }
+            if (headerAuth == null || !headerAuth.startsWith("Bearer ")) {
+                throw new MessageDeliveryException("Missing or invalid Authorization header");
             }
+
+            String jwt = headerAuth.substring(7);
+
+            if (!jwtUtils.validateJwtToken(jwt)) {
+                throw new MessageDeliveryException("Invalid JWT token");
+            }
+
+            String username = jwtUtils.getUsernameFromJwtToken(jwt);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+            accessor.setUser(authentication);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
         return message;
