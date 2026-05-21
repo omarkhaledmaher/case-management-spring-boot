@@ -1,7 +1,6 @@
 package com.example.web.controller;
 
 import java.net.URI;
-import java.security.Principal;
 import java.util.List;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
@@ -72,8 +71,8 @@ public class ChatController {
     @MessageMapping("/chat/{chatId}/send")
     @SendTo("/topic/chat/{chatId}")
     public ChatMessageResponseDto createMessage(@DestinationVariable Long chatId,
-            @Valid @Payload ChatMessageRequestDto dto, Principal principal) {
+            @Valid @Payload ChatMessageRequestDto dto) {
 
-        return chatMessageService.createChatMessage(chatId, dto, principal);
+        return chatMessageService.createChatMessage(chatId, dto);
     }
 }

@@ -14,7 +14,7 @@ public class EventPublisher {
     private final JmsTemplate jmsTemplate;
 
     public void publishEvent(DatabaseOperation operation, String entityName, String methodName, Object result) {
-        String username = authFacade.getAuthentication().getName();
+        String username = authFacade.getUsername();
         jmsTemplate.convertAndSend("database.logging",
                 new EventDto(operation, entityName, methodName, username, result.toString()));
     }
