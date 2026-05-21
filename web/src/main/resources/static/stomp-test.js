@@ -74,7 +74,18 @@ function connect() {
         addMessage(`Received: ${JSON.stringify(body, null, 2)}`, "received");
       });
 
+      // Subscribe to error queues
+      stompClient.subscribe("/queue/errors", (message) => {
+        addMessage(`Error queue: ${message.body}`, "error");
+      });
+
+      stompClient.subscribe("/user/queue/errors", (message) => {
+        addMessage(`User error queue: ${message.body}`, "error");
+      });
+
       addMessage(`Subscribed to /topic/chat/${chatId}`, "received");
+      addMessage("Subscribed to /queue/errors", "received");
+      addMessage("Subscribed to /user/queue/errors", "received");
       document.getElementById("sendBtn").disabled = false;
     },
     (error) => {
