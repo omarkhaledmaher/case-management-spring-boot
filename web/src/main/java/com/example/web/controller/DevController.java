@@ -15,6 +15,8 @@ import com.example.common.dto.UserResponseDto;
 import com.example.service.RoleService;
 import com.example.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -24,11 +26,16 @@ import lombok.AllArgsConstructor;
 @RequestMapping("/api/dev")
 @AllArgsConstructor
 @Tag(name = "Development", description = "Endpoints for development and testing purposes only")
+@ApiResponse(responseCode = "400", description = "Invalid request body")
 public class DevController {
     private final UserService userService;
     private final RoleService roleService;
 
     @Operation(summary = "Create a test user")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "User successfully created"),
+            @ApiResponse(responseCode = "409", description = "Conflicting username")
+    })
     @PostMapping("/users")
     public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserRequestDto dto,
             UriComponentsBuilder ucb) {
@@ -38,6 +45,10 @@ public class DevController {
     }
 
     @Operation(summary = "Create a test role", description = "If privileges do not exist, they will be created.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Role successfully created"),
+            @ApiResponse(responseCode = "409", description = "Conflicting role name")
+    })
     @PostMapping("/roles")
     public ResponseEntity<RoleResponseDto> createRole(@Valid @RequestBody RoleRequestDto dto,
             UriComponentsBuilder ucb) {

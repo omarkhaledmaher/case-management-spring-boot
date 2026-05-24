@@ -20,17 +20,25 @@ import com.example.common.dto.RoleRequestDto;
 import com.example.common.dto.RoleResponseDto;
 import com.example.service.RoleService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/roles")
 @Tag(name = "Roles", description = "Operations related to role and privilege management")
+@ApiResponse(responseCode = "401", description = "Unauthenticated session")
 public class RoleController {
     @Autowired
     private RoleService roleService;
 
     @Operation(summary = "Gets role by ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Role found and returned"),
+            @ApiResponse(responseCode = "403", description = "Missing ADMIN role"),
+            @ApiResponse(responseCode = "404", description = "Role with specified ID not found")
+    })
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<RoleResponseDto> getRoleById(@PathVariable Long id) {
@@ -40,6 +48,10 @@ public class RoleController {
 
     @Operation(summary = "Gets all roles",
             description = "With optional pagination")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Roles retrieved successfully"),
+            @ApiResponse(responseCode = "403", description = "Missing ADMIN role")
+    })
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<RoleResponseDto>> getAllRoles(@ParameterObject Pageable pageable) {
@@ -50,6 +62,11 @@ public class RoleController {
     @Operation(
             summary = "Creates a new role",
             description = " If privileges do not exist, they will be created.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Role successfully created"),
+            @ApiResponse(responseCode = "400", description = "Invalid request body"),
+            @ApiResponse(responseCode = "403", description = "Missing ADMIN role")
+    })
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<RoleResponseDto> createRole(@Valid @RequestBody RoleRequestDto dto,
@@ -61,6 +78,13 @@ public class RoleController {
 
     @Operation(summary = "Fully updates role",
             description = "If privileges do not exist, they will be created.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Role successfully updated"),
+            @ApiResponse(responseCode = "400", description = "Invalid request body"),
+            @ApiResponse(responseCode = "403", description = "Missing ADMIN role"),
+            @ApiResponse(responseCode = "404", description = "Role with specified ID not found"),
+            @ApiResponse(responseCode = "409", description = "Conflicting role name")
+    })
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> updateRole(@PathVariable Long id, @Valid @RequestBody RoleRequestDto dto) {
@@ -71,6 +95,11 @@ public class RoleController {
     @Operation(
             summary = "Deletes role by ID",
             description = "Does not delete any privileges")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Role successfully deleted"),
+            @ApiResponse(responseCode = "403", description = "Missing ADMIN role"),
+            @ApiResponse(responseCode = "404", description = "Role with specified ID not found")
+    })
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<RoleResponseDto> deleteRole(@PathVariable Long id) {

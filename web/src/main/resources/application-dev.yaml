@@ -9,6 +9,9 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: create
+springdoc:
+  default-produces-media-type: application/json
+  default-consumes-media-type: application/json
 logging:
   level:
     root: info
