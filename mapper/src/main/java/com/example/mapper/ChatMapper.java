@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import org.springframework.stereotype.Component;
 import com.example.common.dto.ChatMessageResponseDto;
-import com.example.common.dto.ChatParticipantDto;
+import com.example.common.dto.ChatParticipantResponseDto;
 import com.example.common.dto.ChatResponseDto;
 import com.example.model.Case;
 import com.example.model.Chat;
@@ -27,7 +27,7 @@ public class ChatMapper {
     }
 
     public ChatResponseDto toDto(Chat chat) {
-        List<ChatParticipantDto> participants = chat.getParticipants().stream()
+        List<ChatParticipantResponseDto> participants = chat.getParticipants().stream()
                 .map(userMapper::toChatParticipantDto)
                 .toList();
         List<ChatMessageResponseDto> messageContents = chat.getMessages().stream()

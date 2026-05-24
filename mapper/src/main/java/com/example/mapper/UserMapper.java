@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import com.example.common.dto.ChatParticipantDto;
+import com.example.common.dto.ChatParticipantResponseDto;
 import com.example.common.dto.RegisterDto;
 import com.example.common.dto.RoleResponseDto;
 import com.example.common.dto.UserRequestDto;
@@ -39,7 +39,7 @@ public class UserMapper {
         return user;
     }
 
-    public ChatParticipantDto toChatParticipantDto(User user) {
-        return new ChatParticipantDto(user.getId(), user.getUsername());
+    public ChatParticipantResponseDto toChatParticipantDto(User user) {
+        return new ChatParticipantResponseDto(user.getId(), user.getUsername());
     }
 }

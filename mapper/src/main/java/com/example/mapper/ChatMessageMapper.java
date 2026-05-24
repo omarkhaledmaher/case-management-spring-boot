@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.example.common.dto.ChatMessageRequestDto;
 import com.example.common.dto.ChatMessageResponseDto;
-import com.example.common.dto.ChatParticipantDto;
+import com.example.common.dto.ChatParticipantResponseDto;
 import com.example.model.Chat;
 import com.example.model.ChatMessage;
 import com.example.model.User;
@@ -15,7 +15,7 @@ public class ChatMessageMapper {
     private UserMapper userMapper;
 
     public ChatMessageResponseDto toDto(ChatMessage chatMessage) {
-        ChatParticipantDto senderDto = userMapper.toChatParticipantDto(chatMessage.getSender());
+        ChatParticipantResponseDto senderDto = userMapper.toChatParticipantDto(chatMessage.getSender());
         return new ChatMessageResponseDto(
                 chatMessage.getId(),
                 senderDto,
