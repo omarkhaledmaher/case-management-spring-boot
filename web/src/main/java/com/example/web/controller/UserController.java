@@ -57,7 +57,7 @@ public class UserController {
     @Operation(summary = "Fully updates user by ID", description = "User must exist")
     @PutMapping("/{id}")
     @PreAuthorize("#id == authentication.principal.id or hasRole('ADMIN')")
-    public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long id, @Valid @RequestBody UserRequestDto dto) {
+    public ResponseEntity<Void> updateUser(@PathVariable Long id, @Valid @RequestBody UserRequestDto dto) {
         userService.updateUser(id, dto);
         return ResponseEntity.noContent().build();
     }

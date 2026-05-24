@@ -63,7 +63,7 @@ public class RoleController {
             description = "If privileges do not exist, they will be created.")
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<RoleResponseDto> updateRole(@PathVariable Long id, @Valid @RequestBody RoleRequestDto dto) {
+    public ResponseEntity<Void> updateRole(@PathVariable Long id, @Valid @RequestBody RoleRequestDto dto) {
         roleService.updateRole(id, dto);
         return ResponseEntity.noContent().build();
     }
