@@ -19,6 +19,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -33,7 +34,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class Case {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "case_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "case_seq_generator")
+    @SequenceGenerator(name = "case_seq_generator", sequenceName = "case_seq", allocationSize = 1)
     private Long id;
 
     @Enumerated(EnumType.STRING)
