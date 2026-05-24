@@ -2,6 +2,7 @@ package com.example.security;
 
 import java.security.Key;
 import java.util.Date;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,27 +28,26 @@ public class JwtUtils {
     @Value("${jwt.expiration}")
     private int jwtExpirationMs;
 
+    @Autowired
+    private MyUserDetailsService userDetailsService;
+
     public JwtResponseDto generateJwtToken(User user) {
-        return new JwtResponseDto(
-                Jwts.builder()
-                        .setSubject((user.getUsername()))
-                        .setIssuedAt(new Date())
-                        .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-                        .signWith(key(), SignatureAlgorithm.HS256)
-                        .compact(),
-                jwtExpirationMs);
+        UserDetails userDetails = userDetailsService.toUserDetails(user);
+        return new JwtResponseDto(buildJwtToken(userDetails), jwtExpirationMs);
     }
 
     public JwtResponseDto generateJwtToken(Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return new JwtResponseDto(
-                Jwts.builder()
-                        .setSubject((userDetails.getUsername()))
-                        .setIssuedAt(new Date())
-                        .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-                        .signWith(key(), SignatureAlgorithm.HS256)
-                        .compact(),
-                jwtExpirationMs);
+        return new JwtResponseDto(buildJwtToken(userDetails), jwtExpirationMs);
+    }
+
+    private String buildJwtToken(UserDetails userDetails) {
+        return Jwts.builder()
+                .setSubject((userDetails.getUsername()))
+                .setIssuedAt(new Date())
+                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                .signWith(key(), SignatureAlgorithm.HS256)
+                .compact();
     }
 
     private Key key() {
