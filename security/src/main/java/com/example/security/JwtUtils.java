@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import com.example.common.dto.JwtDto;
+import com.example.common.dto.JwtResponseDto;
 import com.example.model.User;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -27,8 +27,8 @@ public class JwtUtils {
     @Value("${jwt.expiration}")
     private int jwtExpirationMs;
 
-    public JwtDto generateJwtToken(User user) {
-        return new JwtDto(
+    public JwtResponseDto generateJwtToken(User user) {
+        return new JwtResponseDto(
                 Jwts.builder()
                         .setSubject((user.getUsername()))
                         .setIssuedAt(new Date())
@@ -38,9 +38,9 @@ public class JwtUtils {
                 jwtExpirationMs);
     }
 
-    public JwtDto generateJwtToken(Authentication authentication) {
+    public JwtResponseDto generateJwtToken(Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return new JwtDto(
+        return new JwtResponseDto(
                 Jwts.builder()
                         .setSubject((userDetails.getUsername()))
                         .setIssuedAt(new Date())

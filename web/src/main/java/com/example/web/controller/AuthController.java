@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.example.common.dto.JwtDto;
+import com.example.common.dto.JwtResponseDto;
 import com.example.common.dto.LoginDto;
 import com.example.common.dto.RegisterDto;
 import com.example.service.UserService;
@@ -24,13 +24,13 @@ public class AuthController {
     @Operation(summary = "Register a new user",
             description = "Username must be unique. Returns JWT token if successful")
     @PostMapping("/register")
-    public ResponseEntity<JwtDto> register(@Valid @RequestBody RegisterDto registerDto) {
+    public ResponseEntity<JwtResponseDto> register(@Valid @RequestBody RegisterDto registerDto) {
         return ResponseEntity.ok(userService.registerUser(registerDto));
     }
 
     @Operation(summary = "Authenticate user", description = "Returns JWT token if successful")
     @PostMapping("/login")
-    public ResponseEntity<JwtDto> login(@Valid @RequestBody LoginDto loginDto) {
+    public ResponseEntity<JwtResponseDto> login(@Valid @RequestBody LoginDto loginDto) {
         return ResponseEntity.ok(userService.authenticate(loginDto));
     }
 }

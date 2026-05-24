@@ -11,7 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.example.common.dto.JwtDto;
+import com.example.common.dto.JwtResponseDto;
 import com.example.common.dto.LoginDto;
 import com.example.common.dto.RegisterDto;
 import com.example.common.dto.UserRequestDto;
@@ -40,7 +40,7 @@ public class UserService {
     private final EventPublisher eventPublisher;
 
     @Transactional
-    public JwtDto registerUser(RegisterDto dto) throws DuplicateUsernameException {
+    public JwtResponseDto registerUser(RegisterDto dto) throws DuplicateUsernameException {
 
         if (repository.existsByUsername(dto.username())) {
             throw new DuplicateUsernameException("Account with username " + dto.username() + " already exists");
@@ -54,7 +54,7 @@ public class UserService {
     }
 
     @Transactional
-    public JwtDto authenticate(LoginDto dto) {
+    public JwtResponseDto authenticate(LoginDto dto) {
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(dto.username(), dto.password()));
         return jwtUtils.generateJwtToken(authentication);
