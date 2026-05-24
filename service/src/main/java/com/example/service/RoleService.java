@@ -91,15 +91,18 @@ public class RoleService {
                 .map(this::toPrivilege)
                 .toList();
 
+        List<Privilege> savedPrivileges = new ArrayList<>();
         if (!newPrivileges.isEmpty()) {
-            List<String> savedPrivileges = privilegeRepository.saveAll(newPrivileges).stream()
+            savedPrivileges = privilegeRepository.saveAll(newPrivileges);
+            List<String> savedPrivilegeNames = savedPrivileges.stream()
                     .map(Privilege::getName)
                     .toList();
-            eventPublisher.publishEvent(DatabaseOperation.CREATED, "Privilege", "createPrivileges", savedPrivileges);
+            eventPublisher.publishEvent(DatabaseOperation.CREATED, "Privilege", "createPrivileges",
+                    savedPrivilegeNames);
         }
 
         List<Privilege> allPrivileges = new ArrayList<>(existingPrivileges);
-        allPrivileges.addAll(newPrivileges);
+        allPrivileges.addAll(savedPrivileges);
 
         return allPrivileges;
     }
