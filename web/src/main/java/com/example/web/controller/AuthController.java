@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.common.dto.JwtResponseDto;
-import com.example.common.dto.LoginDto;
-import com.example.common.dto.RegisterDto;
+import com.example.common.dto.LoginRequestDto;
+import com.example.common.dto.RegisterRequestDto;
 import com.example.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,13 +24,13 @@ public class AuthController {
     @Operation(summary = "Register a new user",
             description = "Username must be unique. Returns JWT token if successful")
     @PostMapping("/register")
-    public ResponseEntity<JwtResponseDto> register(@Valid @RequestBody RegisterDto registerDto) {
+    public ResponseEntity<JwtResponseDto> register(@Valid @RequestBody RegisterRequestDto registerDto) {
         return ResponseEntity.ok(userService.registerUser(registerDto));
     }
 
     @Operation(summary = "Authenticate user", description = "Returns JWT token if successful")
     @PostMapping("/login")
-    public ResponseEntity<JwtResponseDto> login(@Valid @RequestBody LoginDto loginDto) {
+    public ResponseEntity<JwtResponseDto> login(@Valid @RequestBody LoginRequestDto loginDto) {
         return ResponseEntity.ok(userService.authenticate(loginDto));
     }
 }

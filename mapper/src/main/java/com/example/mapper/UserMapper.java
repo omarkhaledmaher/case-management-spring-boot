@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.example.common.dto.ChatParticipantResponseDto;
-import com.example.common.dto.RegisterDto;
+import com.example.common.dto.RegisterRequestDto;
 import com.example.common.dto.RoleResponseDto;
 import com.example.common.dto.UserRequestDto;
 import com.example.common.dto.UserResponseDto;
@@ -31,7 +31,7 @@ public class UserMapper {
         return user;
     }
 
-    public User toUser(RegisterDto dto, String encodedPassword, List<Role> roles) {
+    public User toUser(RegisterRequestDto dto, String encodedPassword, List<Role> roles) {
         User user = new User();
         user.setUsername(dto.username());
         user.setPassword(encodedPassword);
