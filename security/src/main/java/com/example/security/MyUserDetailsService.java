@@ -2,7 +2,6 @@ package com.example.security;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -24,7 +23,7 @@ public class MyUserDetailsService implements UserDetailsService {
 
     @Override
     public MyUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username).map(toUserDetails())
+        return userRepository.findByUsername(username).map(this::toUserDetails)
                 .orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " not found"));
     }
 
@@ -54,8 +53,8 @@ public class MyUserDetailsService implements UserDetailsService {
         return authorities;
     }
 
-    private Function<User, MyUserDetails> toUserDetails() {
-        return user -> new MyUserDetails(
+    public MyUserDetails toUserDetails(User user) {
+        return new MyUserDetails(
                 user.getId(),
                 user.getUsername(),
                 user.getPassword(),
