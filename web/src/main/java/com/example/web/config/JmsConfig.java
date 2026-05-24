@@ -18,6 +18,7 @@ public class JmsConfig {
             DefaultJmsListenerContainerFactoryConfigurer configurer) {
 
         DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
+        factory.setSessionTransacted(true);
         configurer.configure(factory, connectionFactory);
         return factory;
     }
