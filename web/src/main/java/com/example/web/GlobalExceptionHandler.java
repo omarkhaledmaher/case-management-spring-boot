@@ -39,7 +39,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<Object> handleBadCredential(BadCredentialsException ex) {
         log.info("Bad credentials: {}", ex.getMessage());
-        return new ResponseEntity<>("Email or password is incorrect", HttpStatus.CONFLICT);
+        return new ResponseEntity<>("Username or password is incorrect", HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(DuplicateUsernameException.class)
