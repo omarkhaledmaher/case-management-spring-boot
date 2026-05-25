@@ -4,6 +4,7 @@ import java.util.List;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,8 +35,8 @@ public class UserNotificationController {
             description = "Received notifications will be marked as read")
     @GetMapping
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public List<UserNotificationResponseDto> getUserNotifications(@ParameterObject Pageable pageable) {
-        return notificationService.getAllUserNotifications(pageable);
+    public ResponseEntity<List<UserNotificationResponseDto>> getUserNotifications(@ParameterObject Pageable pageable) {
+        return ResponseEntity.ok(notificationService.getAllUserNotifications(pageable));
     }
 
 }
