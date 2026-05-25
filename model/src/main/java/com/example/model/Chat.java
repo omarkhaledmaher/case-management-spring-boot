@@ -3,6 +3,7 @@ package com.example.model;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import org.hibernate.annotations.BatchSize;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -33,6 +34,7 @@ public class Chat {
     private Case chatCase;
 
     @ManyToMany
+    @BatchSize(size = 10)
     @JoinTable(
             name = "chat_participants",
             joinColumns = @JoinColumn(name = "chat_id"),
@@ -40,6 +42,7 @@ public class Chat {
     private Set<User> participants = new HashSet<>();
 
     @OneToMany(mappedBy = "chat")
+    @BatchSize(size = 50)
     private Set<ChatMessage> messages = new HashSet<>();
 
     @Override

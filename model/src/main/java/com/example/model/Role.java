@@ -3,6 +3,7 @@ package com.example.model;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import org.hibernate.annotations.BatchSize;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -34,6 +35,7 @@ public class Role {
     private Set<User> users = new HashSet<>();
 
     @ManyToMany(cascade = CascadeType.PERSIST)
+    @BatchSize(size = 10)
     @JoinTable(
             name = "roles_privileges",
             joinColumns = @JoinColumn(

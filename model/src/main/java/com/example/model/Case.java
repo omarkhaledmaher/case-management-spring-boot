@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import com.example.common.enums.CaseStatus;
@@ -56,6 +57,7 @@ public class Case {
     private CaseStatus status = CaseStatus.OPEN;
 
     @ManyToMany
+    @BatchSize(size = 10)
     @JoinTable(
             name = "cases_users",
             joinColumns = {

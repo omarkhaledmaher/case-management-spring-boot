@@ -3,6 +3,7 @@ package com.example.model;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import org.hibernate.annotations.BatchSize;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,6 +33,7 @@ public class User {
     private String password;
 
     @ManyToMany
+    @BatchSize(size = 10)
     @JoinTable(
             name = "users_roles",
             joinColumns = @JoinColumn(
