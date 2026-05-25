@@ -1,5 +1,6 @@
 package com.example.security;
 
+import java.util.Optional;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageDeliveryException;
@@ -26,17 +27,13 @@ public class WebSocketSecurityInterceptor implements ChannelInterceptor {
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
             String headerAuth = accessor.getFirstNativeHeader("Authorization");
 
-            if (headerAuth == null || !headerAuth.startsWith("Bearer ")) {
-                throw new MessageDeliveryException("Missing or invalid Authorization header");
-            }
+            Optional<String> jwt = jwtUtils.parseJwt(headerAuth);
 
-            String jwt = headerAuth.substring(7);
-
-            if (!jwtUtils.validateJwtToken(jwt)) {
+            if (!jwt.isPresent() || !jwtUtils.validateJwtToken(jwt.get())) {
                 throw new MessageDeliveryException("Invalid JWT token");
             }
 
-            String username = jwtUtils.getUsernameFromJwtToken(jwt);
+            String username = jwtUtils.getUsernameFromJwtToken(jwt.get());
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
             UsernamePasswordAuthenticationToken authentication =

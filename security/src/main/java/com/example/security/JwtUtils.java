@@ -2,11 +2,13 @@ package com.example.security;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import com.example.common.dto.JwtResponseDto;
 import com.example.model.User;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -16,6 +18,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 
 @Component
@@ -39,6 +42,29 @@ public class JwtUtils {
     public JwtResponseDto generateJwtToken(Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         return new JwtResponseDto(buildJwtToken(userDetails), jwtExpirationMs);
+    }
+
+    public Optional<String> parseJwt(HttpServletRequest request) {
+        String headerAuth = request.getHeader("Authorization");
+
+        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
+            return Optional.of(headerAuth.substring(7));
+        }
+
+        return Optional.empty();
+    }
+
+    public Optional<String> parseJwt(String s) {
+        if (StringUtils.hasText(s) && s.startsWith("Bearer ")) {
+            return Optional.of(s.substring(7));
+        }
+
+        return Optional.empty();
+    }
+
+    public Date getExpiration(String token) {
+        return Jwts.parserBuilder().setSigningKey(key()).build()
+                .parseClaimsJws(token).getBody().getExpiration();
     }
 
     private String buildJwtToken(UserDetails userDetails) {
