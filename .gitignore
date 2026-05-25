@@ -33,7 +33,7 @@ build/
 .vscode/
 
 *.http
-secrets.yaml
+# secrets.yaml
 
 ### Logging ###
 logs/
