@@ -20,6 +20,8 @@ import com.example.common.dto.UserRequestDto;
 import com.example.common.dto.UserResponseDto;
 import com.example.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
@@ -31,6 +33,13 @@ public class UserController {
     private UserService userService;
 
     @Operation(summary = "Gets user by ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "User found and returned"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated session"),
+            @ApiResponse(responseCode = "403",
+                    description = "Missing USER role or not requesting own user and missing ADMIN role"),
+            @ApiResponse(responseCode = "404", description = "User with specified ID not found")
+    })
     @GetMapping("/{id}")
     @PreAuthorize("#id == authentication.principal.id or hasRole('ADMIN')")
     public ResponseEntity<UserResponseDto> getUserById(@PathVariable Long id) {
@@ -38,6 +47,11 @@ public class UserController {
     }
 
     @Operation(summary = "Gets all users", description = "With optional pagination")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Users retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated session"),
+            @ApiResponse(responseCode = "403", description = "Missing ADMIN role")
+    })
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserResponseDto>> getAllUsers(@ParameterObject Pageable pageable) {
@@ -45,6 +59,12 @@ public class UserController {
     }
 
     @Operation(summary = "Creates a new user")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "User created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request body"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated session"),
+            @ApiResponse(responseCode = "403", description = "Missing ADMIN role")
+    })
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserRequestDto dto,
@@ -55,6 +75,15 @@ public class UserController {
     }
 
     @Operation(summary = "Fully updates user by ID", description = "User must exist")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "User updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request body"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated session"),
+            @ApiResponse(responseCode = "403",
+                    description = "Missing USER role or not requesting own user and missing ADMIN role"),
+            @ApiResponse(responseCode = "404", description = "User with specified ID not found"),
+            @ApiResponse(responseCode = "409", description = "Conflicting username")
+    })
     @PutMapping("/{id}")
     @PreAuthorize("#id == authentication.principal.id or hasRole('ADMIN')")
     public ResponseEntity<Void> updateUser(@PathVariable Long id, @Valid @RequestBody UserRequestDto dto) {
@@ -63,6 +92,13 @@ public class UserController {
     }
 
     @Operation(summary = "Deletes user by ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "User deleted successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated session"),
+            @ApiResponse(responseCode = "403",
+                    description = "Missing USER role or not requesting own user and missing ADMIN role"),
+            @ApiResponse(responseCode = "404", description = "User with specified ID not found")
+    })
     @DeleteMapping("/{id}")
     @PreAuthorize("#id == authentication.principal.id or hasRole('ADMIN')")
     public ResponseEntity<UserResponseDto> deleteUser(@PathVariable Long id) {

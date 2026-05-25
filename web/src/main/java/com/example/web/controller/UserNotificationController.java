@@ -13,6 +13,8 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import com.example.common.dto.UserNotificationResponseDto;
 import com.example.service.UserNotificationService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
@@ -30,9 +32,12 @@ public class UserNotificationController {
         return notificationService.subscribe();
     }
 
-    @Operation(
-            summary = "Gets user's notifications",
-            description = "Received notifications will be marked as read")
+    @Operation(summary = "Gets user's notifications", description = "Received notifications will be marked as read")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Notifications retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated session"),
+            @ApiResponse(responseCode = "403", description = "Missing USER or ADMIN role")
+    })
     @GetMapping
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<List<UserNotificationResponseDto>> getUserNotifications(@ParameterObject Pageable pageable) {

@@ -24,6 +24,8 @@ import com.example.common.dto.ChatResponseDto;
 import com.example.service.ChatMessageService;
 import com.example.service.ChatService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -37,6 +39,12 @@ public class ChatController {
     private final ChatMessageService chatMessageService;
 
     @Operation(summary = "Gets chat by ID", description = "User must be a participant in the chat")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Chat found and returned"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated session"),
+            @ApiResponse(responseCode = "403", description = "Missing USER or ADMIN role or not a participant in chat"),
+            @ApiResponse(responseCode = "404", description = "Case or Chat with specified ID not found")
+    })
     @GetMapping("/{chatId}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<ChatResponseDto> getChat(@PathVariable Long caseId, @PathVariable Long chatId) {
@@ -46,6 +54,12 @@ public class ChatController {
 
     @Operation(summary = "Gets all chats for a case",
             description = "Returns all chats for the specified case that the user is a participant in with optional pagination")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Chats retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated session"),
+            @ApiResponse(responseCode = "403", description = "Missing USER or ADMIN role"),
+            @ApiResponse(responseCode = "404", description = "Case with specified ID not found")
+    })
     @GetMapping
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<List<ChatResponseDto>> getAllChats(@PathVariable Long caseId,
@@ -56,6 +70,13 @@ public class ChatController {
 
     @Operation(summary = "Create a new chat",
             description = "Creates a new chat for the specified case with the given participants")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Chat created successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid request body or missing participant IDs"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated session"),
+            @ApiResponse(responseCode = "403", description = "Missing USER or ADMIN role"),
+            @ApiResponse(responseCode = "404", description = "Case with specified ID not found")
+    })
     @PostMapping
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<ChatResponseDto> createChat(@PathVariable Long caseId, @Valid @RequestBody ChatRequestDto dto,

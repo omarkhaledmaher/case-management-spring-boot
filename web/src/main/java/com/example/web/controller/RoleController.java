@@ -28,7 +28,6 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/roles")
 @Tag(name = "Roles", description = "Operations related to role and privilege management")
-@ApiResponse(responseCode = "401", description = "Unauthenticated session")
 public class RoleController {
     @Autowired
     private RoleService roleService;
@@ -36,6 +35,7 @@ public class RoleController {
     @Operation(summary = "Gets role by ID")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Role found and returned"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated session"),
             @ApiResponse(responseCode = "403", description = "Missing ADMIN role"),
             @ApiResponse(responseCode = "404", description = "Role with specified ID not found")
     })
@@ -50,6 +50,7 @@ public class RoleController {
             description = "With optional pagination")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Roles retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated session"),
             @ApiResponse(responseCode = "403", description = "Missing ADMIN role")
     })
     @GetMapping
@@ -65,6 +66,7 @@ public class RoleController {
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Role successfully created"),
             @ApiResponse(responseCode = "400", description = "Invalid request body"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated session"),
             @ApiResponse(responseCode = "403", description = "Missing ADMIN role")
     })
     @PostMapping
@@ -81,6 +83,7 @@ public class RoleController {
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Role successfully updated"),
             @ApiResponse(responseCode = "400", description = "Invalid request body"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated session"),
             @ApiResponse(responseCode = "403", description = "Missing ADMIN role"),
             @ApiResponse(responseCode = "404", description = "Role with specified ID not found"),
             @ApiResponse(responseCode = "409", description = "Conflicting role name")
@@ -97,6 +100,7 @@ public class RoleController {
             description = "Does not delete any privileges")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Role successfully deleted"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated session"),
             @ApiResponse(responseCode = "403", description = "Missing ADMIN role"),
             @ApiResponse(responseCode = "404", description = "Role with specified ID not found")
     })

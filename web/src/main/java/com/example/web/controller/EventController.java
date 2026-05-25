@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.model.Event;
 import com.example.service.EventService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
@@ -23,6 +25,12 @@ public class EventController {
     private EventService eventService;
 
     @Operation(summary = "Gets event by ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Event found and returned"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated session"),
+            @ApiResponse(responseCode = "403", description = "Missing ADMIN role"),
+            @ApiResponse(responseCode = "404", description = "Event with specified ID not found")
+    })
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Event> getEventById(@PathVariable Long id) {
@@ -31,6 +39,11 @@ public class EventController {
     }
 
     @Operation(summary = "Gets all events", description = "With optional pagination")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Events retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated session"),
+            @ApiResponse(responseCode = "403", description = "Missing ADMIN role")
+    })
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<Event>> getAllEvents(@ParameterObject Pageable pageable) {
