@@ -1,7 +1,6 @@
 package com.example.model;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 import org.hibernate.annotations.BatchSize;
 import jakarta.persistence.Entity;
@@ -15,6 +14,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,6 +24,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(of = {"id"})
 public class Chat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,19 +45,4 @@ public class Chat {
     @OneToMany(mappedBy = "chat")
     @BatchSize(size = 50)
     private Set<ChatMessage> messages = new HashSet<>();
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!(obj instanceof Chat))
-            return false;
-        Chat other = (Chat) obj;
-        return Objects.equals(id, other.id);
-    }
 }

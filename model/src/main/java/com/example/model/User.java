@@ -1,7 +1,6 @@
 package com.example.model;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 import org.hibernate.annotations.BatchSize;
 import jakarta.persistence.Column;
@@ -13,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,6 +22,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(of = {"id"})
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,19 +48,4 @@ public class User {
 
     @ManyToMany(mappedBy = "assignedUsers")
     private Set<Case> assignedCases = new HashSet<>();
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!(obj instanceof User))
-            return false;
-        User other = (User) obj;
-        return Objects.equals(id, other.id);
-    }
 }

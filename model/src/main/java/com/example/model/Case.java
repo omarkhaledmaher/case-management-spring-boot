@@ -2,7 +2,6 @@ package com.example.model;
 
 import java.time.Instant;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CreationTimestamp;
@@ -23,6 +22,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -33,6 +33,7 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(of = {"id"})
 public class Case {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "case_seq_generator")
@@ -68,19 +69,4 @@ public class Case {
 
     @OneToMany(mappedBy = "chatCase")
     private Set<Chat> chats = new HashSet<>();
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!(obj instanceof Case))
-            return false;
-        Case other = (Case) obj;
-        return Objects.equals(id, other.id);
-    }
 }
