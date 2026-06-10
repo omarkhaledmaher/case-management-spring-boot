@@ -24,7 +24,10 @@ import com.example.model.Role;
 import com.example.model.User;
 import com.example.repository.RoleRepository;
 import com.example.repository.UserRepository;
+import com.example.security.IAuthFacade;
 import com.example.security.JwtUtils;
+import com.example.security.MyUserDetails;
+import com.example.security.MyUserDetailsService;
 import lombok.AllArgsConstructor;
 
 @Service
@@ -38,6 +41,19 @@ public class UserService {
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final EventPublisher eventPublisher;
+    private final IAuthFacade authFacade;
+    private final MyUserDetailsService userDetailsService;
+
+    public UserResponseDto getCurrentUser(MyUserDetails userDetails) {
+        if (userDetails == null) {
+            String username = authFacade.getUsername();
+            userDetails = userDetailsService.loadUserByUsername(username);
+        }
+        List<String> roles = userDetails.getAuthorities().stream().map(a -> a.getAuthority())
+                .filter(a -> a.startsWith("ROLE_"))
+                .toList();
+        return new UserResponseDto(userDetails.getId(), userDetails.getUsername(), roles);
+    }
 
     @Transactional
     public JwtResponseDto registerUser(RegisterRequestDto dto) throws DuplicateUsernameException {
