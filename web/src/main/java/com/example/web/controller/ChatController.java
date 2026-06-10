@@ -96,4 +96,20 @@ public class ChatController {
 
         return chatMessageService.createChatMessage(chatId, dto);
     }
+
+    @Operation(summary = "Gets all messages for a chat",
+            description = "Returns all messages for the specified chat that the user is a participant in")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Messages retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated session"),
+            @ApiResponse(responseCode = "403", description = "Missing USER or ADMIN role or not a participant in chat"),
+            @ApiResponse(responseCode = "404", description = "Chat with specified ID not found")
+    })
+    @GetMapping("/{chatId}/messages")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<List<ChatMessageResponseDto>> getAllMessages(@PathVariable Long caseId,
+            @PathVariable Long chatId) {
+        List<ChatMessageResponseDto> messages = chatMessageService.getAllMessagesByChatId(chatId);
+        return ResponseEntity.ok(messages);
+    }
 }

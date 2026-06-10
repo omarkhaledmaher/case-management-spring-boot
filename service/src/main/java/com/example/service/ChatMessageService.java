@@ -1,6 +1,9 @@
 package com.example.service;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +51,24 @@ public class ChatMessageService {
 
         publishChatNotification(chat, username);
         return responseDto;
+    }
+
+    public List<ChatMessageResponseDto> getAllMessagesByChatId(Long chatId) {
+        String username = authFacade.getUsername();
+        Sort sort = Sort.by(Sort.Direction.ASC, "timestamp");
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " not found"));
+
+        if (!chatRepository.existsByIdAndParticipants(chatId, user)) {
+            throw new ResourceNotFoundException("Chat with id " + chatId + " not found");
+        }
+
+        List<ChatMessage> messages = repository.findByChatId(chatId, sort);
+
+        return messages.stream()
+                .sorted(Comparator.comparing(ChatMessage::getTimestamp))
+                .map(mapper::toDto)
+                .toList();
     }
 
     private void publishChatNotification(Chat chat, String username) {

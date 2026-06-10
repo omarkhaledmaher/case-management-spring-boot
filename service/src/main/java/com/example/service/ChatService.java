@@ -1,6 +1,5 @@
 package com.example.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import org.springframework.data.domain.Pageable;
@@ -59,7 +58,7 @@ public class ChatService {
             throw new IllegalArgumentException("One or more participants are not assigned to this case");
         }
 
-        Chat createdChat = repository.save(mapper.toChat(chatCase, participants, new ArrayList<>()));
+        Chat createdChat = repository.save(mapper.toChat(chatCase, participants));
         ChatResponseDto responseDto = mapper.toDto(createdChat);
         eventPublisher.publishEvent(DatabaseOperation.CREATED, "Chat", "createChat", responseDto);
         publishChatNotification(participants, username, chatCase);

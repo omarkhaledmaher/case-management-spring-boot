@@ -43,6 +43,5 @@ public class Chat {
     private Set<User> participants = new HashSet<>();
 
     @OneToMany(mappedBy = "chat")
-    @BatchSize(size = 50)
     private Set<ChatMessage> messages = new HashSet<>();
 }
