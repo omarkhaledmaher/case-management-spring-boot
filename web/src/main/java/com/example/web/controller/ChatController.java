@@ -31,7 +31,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @RestController
-@RequestMapping("/api/cases/{caseId}/chats")
+@RequestMapping("/api")
 @AllArgsConstructor
 @Tag(name = "Chats", description = "Operations related to case chats and messaging")
 public class ChatController {
@@ -45,9 +45,9 @@ public class ChatController {
             @ApiResponse(responseCode = "403", description = "Missing USER or ADMIN role or not a participant in chat"),
             @ApiResponse(responseCode = "404", description = "Case or Chat with specified ID not found")
     })
-    @GetMapping("/{chatId}")
+    @GetMapping("chats/{chatId}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<ChatResponseDto> getChat(@PathVariable Long caseId, @PathVariable Long chatId) {
+    public ResponseEntity<ChatResponseDto> getChat(@PathVariable Long chatId) {
         ChatResponseDto chat = chatService.getChatById(chatId);
         return ResponseEntity.ok(chat);
     }
@@ -60,9 +60,9 @@ public class ChatController {
             @ApiResponse(responseCode = "403", description = "Missing USER or ADMIN role"),
             @ApiResponse(responseCode = "404", description = "Case with specified ID not found")
     })
-    @GetMapping
+    @GetMapping("cases/{caseId}/chats")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<List<ChatResponseDto>> getAllChats(@PathVariable Long caseId,
+    public ResponseEntity<List<ChatResponseDto>> getAllCaseChats(@PathVariable Long caseId,
             @ParameterObject Pageable pageable) {
         List<ChatResponseDto> chats = chatService.getAllChatsByCaseId(caseId, pageable);
         return ResponseEntity.ok(chats);
@@ -77,7 +77,7 @@ public class ChatController {
             @ApiResponse(responseCode = "403", description = "Missing USER or ADMIN role"),
             @ApiResponse(responseCode = "404", description = "Case with specified ID not found")
     })
-    @PostMapping
+    @PostMapping("/cases/{caseId}/chats")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<ChatResponseDto> createChat(@PathVariable Long caseId, @Valid @RequestBody ChatRequestDto dto,
             UriComponentsBuilder ucb) {
@@ -105,10 +105,9 @@ public class ChatController {
             @ApiResponse(responseCode = "403", description = "Missing USER or ADMIN role or not a participant in chat"),
             @ApiResponse(responseCode = "404", description = "Chat with specified ID not found")
     })
-    @GetMapping("/{chatId}/messages")
+    @GetMapping("chats/{chatId}/messages")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<List<ChatMessageResponseDto>> getAllMessages(@PathVariable Long caseId,
-            @PathVariable Long chatId) {
+    public ResponseEntity<List<ChatMessageResponseDto>> getAllMessages(@PathVariable Long chatId) {
         List<ChatMessageResponseDto> messages = chatMessageService.getAllMessagesByChatId(chatId);
         return ResponseEntity.ok(messages);
     }
