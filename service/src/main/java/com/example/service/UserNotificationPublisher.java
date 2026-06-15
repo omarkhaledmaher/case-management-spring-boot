@@ -10,8 +10,8 @@ public class UserNotificationPublisher {
     @Autowired
     private JmsTemplate jmsTemplate;
 
-    public void publishUserNotification(String title, String message, Long userId) {
+    public void publishUserNotification(String title, String message, String username) {
         jmsTemplate.convertAndSend("notification.queue",
-                new UserNotificationDto(title, message, false, userId));
+                new UserNotificationDto(title, message, false, username));
     }
 }

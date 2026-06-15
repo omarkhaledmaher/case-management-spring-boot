@@ -25,5 +25,5 @@ public class UserNotification {
 
     private Boolean isRead = false;
 
-    private Long userId;
+    private String recipient;
 }

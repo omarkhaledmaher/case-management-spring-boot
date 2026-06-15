@@ -61,7 +61,7 @@ public class CaseService {
                 .forEach(assignedUser -> userNotificationPublisher.publishUserNotification(
                         "New case assigned",
                         "You have been assigned to a new case.",
-                        assignedUser.getId()));
+                        assignedUser.getUsername()));
 
     }
 

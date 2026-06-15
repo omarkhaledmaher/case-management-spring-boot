@@ -72,6 +72,6 @@ public class ChatService {
                 .forEach(p -> userNotificationPublisher.publishUserNotification(
                         "New chat created",
                         "A new chat has been created for case " + chatCase.getDescription(),
-                        p.getId()));
+                        p.getUsername()));
     }
 }

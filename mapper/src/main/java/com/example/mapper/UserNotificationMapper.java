@@ -12,7 +12,7 @@ public class UserNotificationMapper {
         notification.setTitle(dto.title());
         notification.setMessage(dto.message());
         notification.setIsRead(dto.isRead());
-        notification.setUserId(dto.userId());
+        notification.setRecipient(dto.recipient());
         return notification;
     }
 
@@ -21,7 +21,7 @@ public class UserNotificationMapper {
                 notification.getTitle(),
                 notification.getMessage(),
                 notification.getIsRead(),
-                notification.getUserId());
+                notification.getRecipient());
     }
 
     public UserNotificationResponseDto toResponseDto(UserNotification notification) {

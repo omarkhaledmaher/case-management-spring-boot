@@ -79,6 +79,6 @@ public class ChatMessageService {
                 .forEach(p -> userNotificationPublisher.publishUserNotification(
                         "New message in chat",
                         String.format("You have a new message from %s in case %s", username, chatCase.getDescription()),
-                        p.getId()));
+                        p.getUsername()));
     }
 }
