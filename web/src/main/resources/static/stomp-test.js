@@ -53,7 +53,7 @@ function connect() {
 
   updateStatus("Connecting...", "connecting");
 
-  const socket = new WebSocket("ws://localhost:8080/chat");
+  const socket = new WebSocket("ws://localhost:8080/ws");
 
   stompClient = Stomp.over(socket);
 
