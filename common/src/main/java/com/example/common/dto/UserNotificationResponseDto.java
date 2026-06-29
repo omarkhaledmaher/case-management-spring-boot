@@ -1,5 +1,5 @@
 package com.example.common.dto;
 
-public record UserNotificationResponseDto(String title, String message, Boolean isRead) {
+public record UserNotificationResponseDto(Long id, String title, String message, Boolean isRead) {
 
 }

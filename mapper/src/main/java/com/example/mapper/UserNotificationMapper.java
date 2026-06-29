@@ -24,8 +24,13 @@ public class UserNotificationMapper {
                 notification.getRecipient());
     }
 
+    public UserNotificationResponseDto toResponseDto(Long id, UserNotificationDto dto) {
+        return new UserNotificationResponseDto(id, dto.title(), dto.message(), dto.isRead());
+    }
+
     public UserNotificationResponseDto toResponseDto(UserNotification notification) {
         return new UserNotificationResponseDto(
+                notification.getId(),
                 notification.getTitle(),
                 notification.getMessage(),
                 notification.getIsRead());
