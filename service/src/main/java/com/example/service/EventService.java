@@ -1,24 +1,28 @@
 package com.example.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import com.example.common.dto.EventResponseDto;
 import com.example.common.exceptions.ResourceNotFoundException;
+import com.example.mapper.EventMapper;
 import com.example.model.Event;
 import com.example.repository.EventRepository;
+import lombok.AllArgsConstructor;
 
 @Service
+@AllArgsConstructor
 public class EventService {
-    @Autowired
-    private EventRepository eventRepository;
+    private final EventRepository eventRepository;
+    private final EventMapper mapper;
 
-    public Event getEvent(Long id) {
-        return eventRepository.findById(id)
+    public EventResponseDto getEvent(Long id) {
+        Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Event with id " + id + " not found"));
+        return mapper.toDto(event);
     }
 
-    public Page<Event> getAllEvents(Pageable pageable) {
-        return eventRepository.findAll(pageable);
+    public Page<EventResponseDto> getAllEvents(Pageable pageable) {
+        return eventRepository.findAll(pageable).map(mapper::toDto);
     }
 }
