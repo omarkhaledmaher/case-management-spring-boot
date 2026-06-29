@@ -1,7 +1,7 @@
 package com.example.repository;
 
-import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -11,7 +11,7 @@ import com.example.model.Case;
 
 @Repository
 public interface CaseRepository extends JpaRepository<Case, Long> {
-    List<Case> findByAssignedUsersUsername(String username, Pageable pageable);
+    Page<Case> findByAssignedUsersUsername(String username, Pageable pageable);
 
     Optional<Case> findByIdAndAssignedUsersUsername(Long caseId, String username);
 
@@ -21,6 +21,6 @@ public interface CaseRepository extends JpaRepository<Case, Long> {
             "LOWER(c.details.applicantName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
             "LOWER(c.details.referenceName) LIKE LOWER(CONCAT('%', :searchTerm, '%'))" +
             ")")
-    List<Case> searchByDetailsAndAssignedUser(@Param("searchTerm") String searchTerm,
+    Page<Case> searchByDetailsAndAssignedUser(@Param("searchTerm") String searchTerm,
             @Param("username") String username, Pageable pageable);
 }

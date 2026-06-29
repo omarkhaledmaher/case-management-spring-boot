@@ -1,7 +1,7 @@
 package com.example.service;
 
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.example.common.exceptions.ResourceNotFoundException;
@@ -18,8 +18,7 @@ public class EventService {
                 .orElseThrow(() -> new ResourceNotFoundException("Event with id " + id + " not found"));
     }
 
-    public List<Event> getAllEvents(Pageable pageable) {
-        return eventRepository
-                .findAll(pageable).stream().toList();
+    public Page<Event> getAllEvents(Pageable pageable) {
+        return eventRepository.findAll(pageable);
     }
 }

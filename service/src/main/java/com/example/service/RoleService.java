@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,10 +34,8 @@ public class RoleService {
                 .orElseThrow(() -> new ResourceNotFoundException("Role with id " + id + " not found"));
     }
 
-    public List<RoleResponseDto> getAllRoles(Pageable pageable) {
-        return roleRepository
-                .findAll(pageable).stream()
-                .map(mapper::toDto).toList();
+    public Page<RoleResponseDto> getAllRoles(Pageable pageable) {
+        return roleRepository.findAll(pageable).map(mapper::toDto);
     }
 
     @Transactional

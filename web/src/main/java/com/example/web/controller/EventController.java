@@ -1,8 +1,8 @@
 package com.example.web.controller;
 
-import java.util.List;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -46,9 +46,8 @@ public class EventController {
     })
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<Event>> getAllEvents(@ParameterObject Pageable pageable) {
-        List<Event> events = eventService.getAllEvents(pageable);
-        return ResponseEntity.ok(events);
+    public ResponseEntity<Page<Event>> getAllEvents(@ParameterObject Pageable pageable) {
+        return ResponseEntity.ok(eventService.getAllEvents(pageable));
     }
 
 }

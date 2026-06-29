@@ -2,8 +2,6 @@ package com.example.web.controller;
 
 import java.net.URI;
 import java.util.List;
-import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -62,10 +60,8 @@ public class ChatController {
     })
     @GetMapping("cases/{caseId}/chats")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<List<ChatResponseDto>> getAllCaseChats(@PathVariable Long caseId,
-            @ParameterObject Pageable pageable) {
-        List<ChatResponseDto> chats = chatService.getAllChatsByCaseId(caseId, pageable);
-        return ResponseEntity.ok(chats);
+    public ResponseEntity<List<ChatResponseDto>> getAllCaseChats(@PathVariable Long caseId) {
+        return ResponseEntity.ok(chatService.getAllChatsByCaseId(caseId));
     }
 
     @Operation(summary = "Create a new chat",
@@ -108,7 +104,6 @@ public class ChatController {
     @GetMapping("chats/{chatId}/messages")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<List<ChatMessageResponseDto>> getAllMessages(@PathVariable Long chatId) {
-        List<ChatMessageResponseDto> messages = chatMessageService.getAllMessagesByChatId(chatId);
-        return ResponseEntity.ok(messages);
+        return ResponseEntity.ok(chatMessageService.getAllMessagesByChatId(chatId));
     }
 }

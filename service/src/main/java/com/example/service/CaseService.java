@@ -2,6 +2,7 @@ package com.example.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,10 +36,10 @@ public class CaseService {
         return mapper.toDto(caseEntity);
     }
 
-    public List<CaseResponseDto> getAllCases(Pageable pageable) {
+    public Page<CaseResponseDto> getAllCases(Pageable pageable) {
         String username = authFacade.getUsername();
-        List<Case> cases = repository.findByAssignedUsersUsername(username, pageable);
-        return cases.stream().map(mapper::toDto).toList();
+        Page<Case> cases = repository.findByAssignedUsersUsername(username, pageable);
+        return cases.map(mapper::toDto);
     }
 
     @Transactional
@@ -65,9 +66,9 @@ public class CaseService {
 
     }
 
-    public List<CaseResponseDto> searchCases(String searchTerm, Pageable pageable) {
+    public Page<CaseResponseDto> searchCases(String searchTerm, Pageable pageable) {
         String username = authFacade.getUsername();
-        List<Case> cases = repository.searchByDetailsAndAssignedUser(searchTerm, username, pageable);
-        return cases.stream().map(mapper::toDto).toList();
+        Page<Case> cases = repository.searchByDetailsAndAssignedUser(searchTerm, username, pageable);
+        return cases.map(mapper::toDto);
     }
 }

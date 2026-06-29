@@ -2,7 +2,6 @@ package com.example.service;
 
 import java.util.List;
 import java.util.Set;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.common.dto.ChatResponseDto;
@@ -37,10 +36,9 @@ public class ChatService {
         return mapper.toDto(chat);
     }
 
-    public List<ChatResponseDto> getAllChatsByCaseId(Long caseId, Pageable pageable) {
+    public List<ChatResponseDto> getAllChatsByCaseId(Long caseId) {
         String username = authFacade.getUsername();
-        List<Chat> chats = repository.findByChatCaseIdAndParticipantsUsername(caseId, username, pageable);
-
+        List<Chat> chats = repository.findByChatCaseIdAndParticipantsUsername(caseId, username);
         return chats.stream().map(mapper::toDto).toList();
     }
 
