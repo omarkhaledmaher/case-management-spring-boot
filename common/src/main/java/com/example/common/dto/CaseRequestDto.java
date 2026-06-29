@@ -7,7 +7,8 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 
-public record CaseRequestDto(CaseType type, @NotBlank(message = "Description cannot be blank") String description,
+public record CaseRequestDto(@NotBlank(message = "Name cannot be blank") String name, CaseType type,
+        @NotBlank(message = "Description cannot be blank") String description,
         @Valid CaseDetailsDto details,
         CaseStatus status, @NotEmpty(message = "At least one user must be assigned") List<Long> assignedUserIds) {
 

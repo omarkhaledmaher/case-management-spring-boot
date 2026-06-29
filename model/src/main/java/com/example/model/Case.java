@@ -40,6 +40,8 @@ public class Case {
     @SequenceGenerator(name = "case_seq_generator", sequenceName = "case_seq", allocationSize = 1)
     private Long id;
 
+    private String name;
+
     @Enumerated(EnumType.STRING)
     private CaseType type;
 

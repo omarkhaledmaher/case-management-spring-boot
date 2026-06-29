@@ -16,14 +16,15 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class CaseMapper {
     public CaseResponseDto toDto(Case caseEntity) {
-        CaseResponseDto dto = new CaseResponseDto(caseEntity.getId(), caseEntity.getType(), caseEntity.getDescription(),
+        return new CaseResponseDto(caseEntity.getId(), caseEntity.getName(), caseEntity.getType(),
+                caseEntity.getDescription(),
                 toCaseDetailsDto(caseEntity.getDetails()), caseEntity.getCreatedAt(), caseEntity.getUpdatedAt(),
                 caseEntity.getStatus());
-        return dto;
     }
 
     public Case toCase(CaseRequestDto dto, List<User> assignedUsers, List<Chat> chats) {
         Case caseEntity = new Case();
+        caseEntity.setName(dto.name());
         caseEntity.setType(dto.type());
         caseEntity.setDescription(dto.description());
         caseEntity.setDetails(toCaseDetails(dto.details()));
