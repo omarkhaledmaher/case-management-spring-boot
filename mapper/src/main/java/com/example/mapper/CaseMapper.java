@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import com.example.common.dto.CaseDetailsDto;
 import com.example.common.dto.CaseRequestDto;
 import com.example.common.dto.CaseResponseDto;
+import com.example.common.enums.CaseStatus;
 import com.example.model.Case;
 import com.example.model.CaseDetails;
 import com.example.model.Chat;
@@ -28,7 +29,7 @@ public class CaseMapper {
         caseEntity.setType(dto.type());
         caseEntity.setDescription(dto.description());
         caseEntity.setDetails(toCaseDetails(dto.details()));
-        caseEntity.setStatus(dto.status());
+        caseEntity.setStatus(CaseStatus.OPEN);
         caseEntity.setAssignedUsers(new HashSet<>(assignedUsers));
         caseEntity.setChats(new HashSet<>(chats));
         return caseEntity;
