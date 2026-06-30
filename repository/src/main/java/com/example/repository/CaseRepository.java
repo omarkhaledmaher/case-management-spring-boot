@@ -15,10 +15,11 @@ public interface CaseRepository extends JpaRepository<Case, Long> {
 
     @Query("SELECT DISTINCT c FROM Case c JOIN c.assignedUsers u WHERE " +
             "u.username = :username AND (" +
+            "LOWER(c.name) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
             "LOWER(c.details.customerName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
             "LOWER(c.details.applicantName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
             "LOWER(c.details.referenceName) LIKE LOWER(CONCAT('%', :searchTerm, '%'))" +
             ")")
-    Page<Case> searchByDetailsAndAssignedUser(@Param("searchTerm") String searchTerm,
+    Page<Case> search(@Param("searchTerm") String searchTerm,
             @Param("username") String username, Pageable pageable);
 }
