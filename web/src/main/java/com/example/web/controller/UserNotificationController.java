@@ -1,7 +1,6 @@
 package com.example.web.controller;
 
 import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -16,14 +15,15 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 
 @RestController
 @RequestMapping("/api/notifications")
+@RequiredArgsConstructor
 @Tag(name = "User Notifications", description = "Operations related to user notifications and real-time updates")
 public class UserNotificationController {
-    @Autowired
-    private UserNotificationService notificationService;
+    private final UserNotificationService notificationService;
 
     @Operation(summary = "Gets user's notifications")
     @ApiResponses({

@@ -1,6 +1,5 @@
 package com.example.web.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,13 +18,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 @Tag(name = "Authentication", description = "User registration and login")
 public class AuthController {
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     @Operation(summary = "Get current user", description = "Returns the currently authenticated user")
     @ApiResponses({

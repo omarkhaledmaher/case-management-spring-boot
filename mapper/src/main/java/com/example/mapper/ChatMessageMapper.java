@@ -1,6 +1,5 @@
 package com.example.mapper;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.example.common.dto.ChatMessageRequestDto;
 import com.example.common.dto.ChatMessageResponseDto;
@@ -8,11 +7,12 @@ import com.example.common.dto.ChatParticipantResponseDto;
 import com.example.model.Chat;
 import com.example.model.ChatMessage;
 import com.example.model.User;
+import lombok.RequiredArgsConstructor;
 
 @Component
+@RequiredArgsConstructor
 public class ChatMessageMapper {
-    @Autowired
-    private UserMapper userMapper;
+    private final UserMapper userMapper;
 
     public ChatMessageResponseDto toDto(ChatMessage chatMessage) {
         ChatParticipantResponseDto senderDto = userMapper.toChatParticipantDto(chatMessage.getSender());

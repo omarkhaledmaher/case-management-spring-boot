@@ -1,7 +1,6 @@
 package com.example.web.controller;
 
 import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -16,13 +15,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/events")
+@RequiredArgsConstructor
 @Tag(name = "Events", description = "Retrieval of system events")
 public class EventController {
-    @Autowired
-    private EventService eventService;
+    private final EventService eventService;
 
     @Operation(summary = "Gets event by ID")
     @ApiResponses({

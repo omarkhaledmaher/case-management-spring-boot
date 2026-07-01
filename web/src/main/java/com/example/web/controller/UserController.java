@@ -2,7 +2,6 @@ package com.example.web.controller;
 
 import java.net.URI;
 import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -24,13 +23,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/users")
+@RequiredArgsConstructor
 @Tag(name = "Users", description = "Operations related to user account management and administration")
 public class UserController {
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     @Operation(summary = "Gets user by ID")
     @ApiResponses({

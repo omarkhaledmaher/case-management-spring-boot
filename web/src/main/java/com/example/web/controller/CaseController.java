@@ -2,7 +2,6 @@ package com.example.web.controller;
 
 import java.net.URI;
 import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +22,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/cases")
+@RequiredArgsConstructor
 @Tag(name = "Cases", description = "Operations related to case management")
 public class CaseController {
-    @Autowired
-    private CaseService caseService;
+    private final CaseService caseService;
 
     @Operation(summary = "Gets case by ID", description = "User must have access to the case")
     @ApiResponses({

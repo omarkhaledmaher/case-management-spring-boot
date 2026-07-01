@@ -2,7 +2,6 @@ package com.example.mapper;
 
 import java.util.HashSet;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.example.common.dto.ChatParticipantResponseDto;
 import com.example.common.dto.RegisterRequestDto;
@@ -11,11 +10,12 @@ import com.example.common.dto.UserRequestDto;
 import com.example.common.dto.UserResponseDto;
 import com.example.model.Role;
 import com.example.model.User;
+import lombok.RequiredArgsConstructor;
 
 @Component
+@RequiredArgsConstructor
 public class UserMapper {
-    @Autowired
-    private RoleMapper roleMapper;
+    private final RoleMapper roleMapper;
 
     public UserResponseDto toDto(User user) {
         return new UserResponseDto(user.getId(),

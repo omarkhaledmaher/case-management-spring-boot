@@ -1,14 +1,14 @@
 package com.example.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
 import com.example.common.dto.UserNotificationDto;
+import lombok.RequiredArgsConstructor;
 
 @Component
+@RequiredArgsConstructor
 public class UserNotificationPublisher {
-    @Autowired
-    private JmsTemplate jmsTemplate;
+    private final JmsTemplate jmsTemplate;
 
     public void publishUserNotification(String title, String message, String username) {
         jmsTemplate.convertAndSend("notification.queue",
