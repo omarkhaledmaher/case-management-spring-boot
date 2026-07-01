@@ -2,6 +2,7 @@ package com.example.web;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -66,6 +67,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(ConversionFailedException.class)
+    public ResponseEntity<String> handleConflict(ConversionFailedException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
             HttpHeaders headers, HttpStatusCode status, WebRequest request) {
@@ -83,7 +89,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     ResponseEntity<Object> handleGenericException(Exception ex, WebRequest request) {
         log.error("An unexpected error has occurred. Name: {}, Message: {}", ex.getClass().getSimpleName(),
-                        ex.getMessage(), ex);
+                ex.getMessage(), ex);
         return super.handleExceptionInternal(ex, "An unexpected error has occurred",
                 new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
