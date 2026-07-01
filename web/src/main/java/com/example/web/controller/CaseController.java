@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 import com.example.common.dto.CaseRequestDto;
 import com.example.common.dto.CaseResponseDto;
+import com.example.common.enums.CaseStatus;
+import com.example.common.enums.CaseType;
 import com.example.service.CaseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -55,8 +57,9 @@ public class CaseController {
     @GetMapping
     @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and hasAuthority('CASE_READ'))")
     public ResponseEntity<Page<CaseResponseDto>> getAllCases(@RequestParam(required = false) String searchTerm,
+            @RequestParam(required = false) CaseType type, @RequestParam(required = false) CaseStatus status,
             @ParameterObject Pageable pageable) {
-        return ResponseEntity.ok(caseService.getCases(searchTerm, pageable));
+        return ResponseEntity.ok(caseService.getCases(searchTerm, type, status, pageable));
     }
 
     @Operation(summary = "Creates a new case", description = "Requires CASE_CREATE authority")

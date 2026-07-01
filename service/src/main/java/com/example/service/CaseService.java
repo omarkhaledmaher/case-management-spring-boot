@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.common.dto.CaseRequestDto;
 import com.example.common.dto.CaseResponseDto;
+import com.example.common.enums.CaseStatus;
+import com.example.common.enums.CaseType;
 import com.example.common.enums.DatabaseOperation;
 import com.example.common.exceptions.ResourceNotFoundException;
 import com.example.mapper.CaseMapper;
@@ -38,9 +40,20 @@ public class CaseService {
         return mapper.toDto(caseEntity);
     }
 
-    public Page<CaseResponseDto> getCases(String searchTerm, Pageable pageable) {
+    public Page<CaseResponseDto> getCases(String searchTerm, CaseType type, CaseStatus status, Pageable pageable) {
         String username = authFacade.getUsername();
-        Specification<Case> spec = CaseSpecification.hasUser(username).and(CaseSpecification.hasSearchTerm(searchTerm));
+        Specification<Case> spec = CaseSpecification.hasUser(username);
+
+        if (searchTerm != null && !searchTerm.isBlank()) {
+            spec = spec.and(CaseSpecification.hasSearchTerm(searchTerm));
+        }
+        if (type != null) {
+            spec = spec.and(CaseSpecification.hasType(type));
+        }
+        if (status != null) {
+            spec = spec.and(CaseSpecification.hasStatus(status));
+        }
+
         Page<Case> cases = repository.findAll(spec, pageable);
         return cases.map(mapper::toDto);
     }
