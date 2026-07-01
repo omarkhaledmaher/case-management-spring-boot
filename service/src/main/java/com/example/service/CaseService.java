@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.common.dto.CaseRequestDto;
@@ -15,6 +16,7 @@ import com.example.model.Case;
 import com.example.model.User;
 import com.example.repository.CaseRepository;
 import com.example.repository.UserRepository;
+import com.example.repository.specification.CaseSpecification;
 import com.example.security.IAuthFacade;
 import lombok.AllArgsConstructor;
 
@@ -38,7 +40,8 @@ public class CaseService {
 
     public Page<CaseResponseDto> getCases(String searchTerm, Pageable pageable) {
         String username = authFacade.getUsername();
-        Page<Case> cases = repository.findBySearchTerm(searchTerm, username, pageable);
+        Specification<Case> spec = CaseSpecification.hasUser(username).and(CaseSpecification.hasSearchTerm(searchTerm));
+        Page<Case> cases = repository.findAll(spec, pageable);
         return cases.map(mapper::toDto);
     }
 
