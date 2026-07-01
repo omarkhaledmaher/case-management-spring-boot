@@ -36,9 +36,9 @@ public class CaseService {
         return mapper.toDto(caseEntity);
     }
 
-    public Page<CaseResponseDto> getAllCases(Pageable pageable) {
+    public Page<CaseResponseDto> getCases(String searchTerm, Pageable pageable) {
         String username = authFacade.getUsername();
-        Page<Case> cases = repository.findByAssignedUsersUsername(username, pageable);
+        Page<Case> cases = repository.findBySearchTerm(searchTerm, username, pageable);
         return cases.map(mapper::toDto);
     }
 
@@ -64,11 +64,5 @@ public class CaseService {
                         "You have been assigned to a new case.",
                         assignedUser.getUsername()));
 
-    }
-
-    public Page<CaseResponseDto> searchCases(String searchTerm, Pageable pageable) {
-        String username = authFacade.getUsername();
-        Page<Case> cases = repository.search(searchTerm, username, pageable);
-        return cases.map(mapper::toDto);
     }
 }

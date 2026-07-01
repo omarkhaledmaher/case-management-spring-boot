@@ -54,21 +54,9 @@ public class CaseController {
     })
     @GetMapping
     @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and hasAuthority('CASE_READ'))")
-    public ResponseEntity<Page<CaseResponseDto>> getAllCases(@ParameterObject Pageable pageable) {
-        return ResponseEntity.ok(caseService.getAllCases(pageable));
-    }
-
-    @Operation(summary = "Searches cases", description = "Searches based on case details")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Cases retrieved successfully"),
-            @ApiResponse(responseCode = "401", description = "Unauthenticated session"),
-            @ApiResponse(responseCode = "403", description = "Missing CASE_READ authority")
-    })
-    @GetMapping("/search")
-    @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and hasAuthority('CASE_READ'))")
-    public ResponseEntity<Page<CaseResponseDto>> searchCases(@RequestParam(required = false) String searchTerm,
+    public ResponseEntity<Page<CaseResponseDto>> getAllCases(@RequestParam(required = false) String searchTerm,
             @ParameterObject Pageable pageable) {
-        return ResponseEntity.ok(caseService.searchCases(searchTerm, pageable));
+        return ResponseEntity.ok(caseService.getCases(searchTerm, pageable));
     }
 
     @Operation(summary = "Creates a new case", description = "Requires CASE_CREATE authority")

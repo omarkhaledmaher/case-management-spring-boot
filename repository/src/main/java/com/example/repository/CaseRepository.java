@@ -20,6 +20,6 @@ public interface CaseRepository extends JpaRepository<Case, Long> {
             "LOWER(c.details.applicantName) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
             "LOWER(c.details.referenceName) LIKE LOWER(CONCAT('%', :searchTerm, '%'))" +
             ")")
-    Page<Case> search(@Param("searchTerm") String searchTerm,
+    Page<Case> findBySearchTerm(@Param("searchTerm") String searchTerm,
             @Param("username") String username, Pageable pageable);
 }
