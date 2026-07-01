@@ -1,6 +1,7 @@
 package com.example.security;
 
 import java.io.IOException;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,24 +25,30 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+
         try {
-            String jwt = jwtUtils.parseJwt(request).get();
-            if (jwtUtils.validateJwtToken(jwt)) {
-                String username = jwtUtils.getUsernameFromJwtToken(jwt);
+            Optional<String> jwtOptional = jwtUtils.parseJwt(request);
 
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(
-                                userDetails,
-                                null,
-                                userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            if (jwtOptional.isPresent()) {
+                String jwt = jwtOptional.get();
+                if (jwtUtils.validateJwtToken(jwt)) {
+                    String username = jwtUtils.getUsernameFromJwtToken(jwt);
 
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails,
+                                    null,
+                                    userDetails.getAuthorities());
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
             }
         } catch (Exception e) {
             log.error("Cannot set user authentication: {}", e.getMessage());
         }
+
 
         filterChain.doFilter(request, response);
     }
