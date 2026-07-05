@@ -9,11 +9,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.common.dto.CaseRequestDto;
 import com.example.common.dto.CaseResponseDto;
+import com.example.common.dto.ChatParticipantResponseDto;
 import com.example.common.enums.CaseStatus;
 import com.example.common.enums.CaseType;
 import com.example.common.enums.DatabaseOperation;
 import com.example.common.exceptions.ResourceNotFoundException;
 import com.example.mapper.CaseMapper;
+import com.example.mapper.UserMapper;
 import com.example.model.Case;
 import com.example.model.User;
 import com.example.repository.CaseRepository;
@@ -28,6 +30,7 @@ public class CaseService {
     private final CaseMapper mapper;
     private final CaseRepository repository;
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
     private final EventPublisher eventPublisher;
     private final UserNotificationPublisher userNotificationPublisher;
     private final IAuthFacade authFacade;
@@ -56,6 +59,15 @@ public class CaseService {
 
         Page<Case> cases = repository.findAll(spec, pageable);
         return cases.map(mapper::toDto);
+    }
+
+
+    public Page<ChatParticipantResponseDto> getUsersByCaseId(Long id, Pageable pageable) {
+        String username = authFacade.getUsername();
+        if (!repository.existsByIdAndAssignedUsersUsername(id, username)) {
+            throw new ResourceNotFoundException("Case with id " + id + " not found");
+        }
+        return userRepository.findByAssignedCasesId(id, pageable).map(userMapper::toChatParticipantDto);
     }
 
     @Transactional

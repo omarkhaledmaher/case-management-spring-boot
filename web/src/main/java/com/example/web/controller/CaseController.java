@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 import com.example.common.dto.CaseRequestDto;
 import com.example.common.dto.CaseResponseDto;
+import com.example.common.dto.ChatParticipantResponseDto;
 import com.example.common.enums.CaseStatus;
 import com.example.common.enums.CaseType;
 import com.example.service.CaseService;
@@ -60,6 +61,21 @@ public class CaseController {
             @RequestParam(required = false) CaseType type, @RequestParam(required = false) CaseStatus status,
             @ParameterObject Pageable pageable) {
         return ResponseEntity.ok(caseService.getCases(searchTerm, type, status, pageable));
+    }
+
+
+    @Operation(summary = "Gets all users assigned to a case")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Users retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated session"),
+            @ApiResponse(responseCode = "403", description = "Missing CASE_READ authority"),
+            @ApiResponse(responseCode = "404", description = "Case does not exist or user is not assigned to it")
+    })
+    @GetMapping("/{id}/users")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and hasAuthority('CASE_READ'))")
+    public ResponseEntity<Page<ChatParticipantResponseDto>> getAssignedUsers(@PathVariable Long id,
+            @ParameterObject Pageable pageable) {
+        return ResponseEntity.ok(caseService.getUsersByCaseId(id, pageable));
     }
 
     @Operation(summary = "Creates a new case", description = "Requires CASE_CREATE authority")

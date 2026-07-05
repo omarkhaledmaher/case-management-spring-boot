@@ -7,4 +7,6 @@ import com.example.model.Case;
 
 public interface CaseRepository extends JpaRepository<Case, Long>, JpaSpecificationExecutor<Case> {
     Optional<Case> findByIdAndAssignedUsersUsername(Long caseId, String username);
+
+    boolean existsByIdAndAssignedUsersUsername(Long id, String username);
 }
