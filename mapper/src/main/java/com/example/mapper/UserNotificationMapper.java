@@ -1,6 +1,9 @@
 package com.example.mapper;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.stereotype.Component;
+import com.example.common.dto.BulkUserNotificationDto;
 import com.example.common.dto.UserNotificationDto;
 import com.example.common.dto.UserNotificationResponseDto;
 import com.example.model.UserNotification;
@@ -13,6 +16,19 @@ public class UserNotificationMapper {
         notification.setMessage(dto.message());
         notification.setRecipient(dto.recipient());
         return notification;
+    }
+
+    public List<UserNotification> toUserNotifications(BulkUserNotificationDto bulkDto) {
+        List<UserNotification> notifications = new ArrayList<UserNotification>();
+        for (String recipient : bulkDto.recipients()) {
+            UserNotification notification = new UserNotification();
+            notification.setTitle(bulkDto.title());
+            notification.setMessage(bulkDto.message());
+            notification.setIsRead(false);
+            notification.setRecipient(recipient);
+            notifications.add(notification);
+        }
+        return notifications;
     }
 
     public UserNotificationDto toDto(UserNotification notification) {
