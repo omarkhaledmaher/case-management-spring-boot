@@ -33,4 +33,9 @@ public class UserNotificationService {
         String username = authFacade.getUsername();
         repository.markAllUserNotificationsAsRead(username);
     }
+
+    public Long getUnreadUserNotificationCount() {
+        String username = authFacade.getUsername();
+        return repository.countByRecipientAndIsRead(username, false);
+    }
 }

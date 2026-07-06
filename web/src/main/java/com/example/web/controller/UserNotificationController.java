@@ -37,6 +37,18 @@ public class UserNotificationController {
         return ResponseEntity.ok(notificationService.getAllUserNotifications(pageable));
     }
 
+    @Operation(summary = "Gets number of unread notifications")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Count retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated session"),
+            @ApiResponse(responseCode = "403", description = "Missing USER or ADMIN role")
+    })
+    @GetMapping("/count")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<Long> getUnreadUserNotificationsCount() {
+        return ResponseEntity.ok(notificationService.getUnreadUserNotificationCount());
+    }
+
     @Operation(summary = "Marks user's unread notifications as read")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "Notifications retrieved successfully"),

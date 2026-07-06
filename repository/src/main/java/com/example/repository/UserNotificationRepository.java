@@ -14,4 +14,6 @@ public interface UserNotificationRepository extends JpaRepository<UserNotificati
     @Modifying(clearAutomatically = true)
     @Query("UPDATE UserNotification n SET n.isRead = true WHERE n.recipient = :username")
     void markAllUserNotificationsAsRead(String username);
+
+    Long countByRecipientAndIsRead(String username, boolean b);
 }
