@@ -5,7 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -61,4 +63,18 @@ public class UserNotificationController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Deletes notification by ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Notification deleted successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated session"),
+            @ApiResponse(responseCode = "403",
+                    description = "Missing USER or ADMIN role"),
+            @ApiResponse(responseCode = "404", description = "Notification with specified ID not found")
+    })
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        this.notificationService.deleteNotification(id);
+        return ResponseEntity.noContent().build();
+    }
 }
