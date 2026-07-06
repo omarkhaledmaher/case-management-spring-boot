@@ -7,11 +7,16 @@ spring:
   application:
     name: application
   jpa:
-    properties:
-      dialect: org.hibernate.dialect.mysql.dialect
-      format-sql: true
     hibernate:
       ddl-auto: create
+    properties:
+      hibernate:
+        '[order_inserts]': true
+        '[order_updates]': true
+        jdbc:
+          '[batch_size]': 50
+      dialect: org.hibernate.dialect.mysql.dialect
+      format-sql: true
   activemq:
     broker-url: tcp://127.0.0.1:61616
     user: ${mq.username}

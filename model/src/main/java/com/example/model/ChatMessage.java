@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.SequenceGenerator;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -28,7 +29,8 @@ import lombok.Setter;
 @EqualsAndHashCode(of = {"id"})
 public class ChatMessage {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "chat_message_seq_generator")
+    @SequenceGenerator(name = "chat_message_seq_generator", sequenceName = "chat_message_seq")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

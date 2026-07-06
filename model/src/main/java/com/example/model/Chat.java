@@ -13,6 +13,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -27,7 +28,8 @@ import lombok.Setter;
 @EqualsAndHashCode(of = {"id"})
 public class Chat {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "chat_seq_generator")
+    @SequenceGenerator(name = "chat_seq_generator", sequenceName = "chat_seq")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

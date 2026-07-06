@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.SequenceGenerator;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -21,9 +22,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @EqualsAndHashCode(of = {"id"})
 public class Privilege {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "privilege_seq_generator")
+    @SequenceGenerator(name = "privilege_seq_generator", sequenceName = "privilege_seq")
     private Long id;
 
     @Column(unique = true)

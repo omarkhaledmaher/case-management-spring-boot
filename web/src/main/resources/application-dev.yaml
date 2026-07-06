@@ -14,4 +14,6 @@ springdoc:
   default-consumes-media-type: application/json
 logging:
   level:
+    #To see batch inserts
+    # '[org.hibernate.orm.jdbc.batch]': trace
     root: info

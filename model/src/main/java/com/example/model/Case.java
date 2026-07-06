@@ -43,7 +43,7 @@ import lombok.Setter;
 public class Case {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "case_seq_generator")
-    @SequenceGenerator(name = "case_seq_generator", sequenceName = "case_seq", allocationSize = 1)
+    @SequenceGenerator(name = "case_seq_generator", sequenceName = "case_seq")
     private Long id;
 
     private String name;
