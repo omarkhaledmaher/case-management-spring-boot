@@ -78,18 +78,17 @@ public class CaseService {
         Case savedCase = repository.save(mapper.toCase(dto, assignedUsers, new ArrayList<>()));
         CaseResponseDto responseDto = mapper.toDto(savedCase);
         eventPublisher.publishEvent(DatabaseOperation.CREATED, "Case", "createCase", responseDto);
-        publishCaseNotification(assignedUsers, username);
+        publishCaseNotification(dto.name(), assignedUsers, username);
 
         return responseDto;
     }
 
-    private void publishCaseNotification(List<User> assignedUsers, String username) {
-        assignedUsers.stream()
-                .filter(assignedUser -> !assignedUser.getUsername().equals(username))
-                .forEach(assignedUser -> userNotificationPublisher.publishUserNotification(
-                        "New case assigned",
-                        "You have been assigned to a new case.",
-                        assignedUser.getUsername()));
+    private void publishCaseNotification(String caseName, List<User> assignedUsers, String username) {
+        List<String> recipients =
+                assignedUsers.stream().map((u) -> u.getUsername()).filter(u -> !u.equals(username)).toList();
+
+        userNotificationPublisher
+                .publishUserNotification("New case assigned", "You have been assigned to " + caseName, recipients);
 
     }
 }

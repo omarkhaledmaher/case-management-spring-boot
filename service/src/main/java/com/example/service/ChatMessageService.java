@@ -71,13 +71,14 @@ public class ChatMessageService {
     }
 
     private void publishChatNotification(Chat chat, String message, String sender) {
-        Set<User> participants = chat.getParticipants();
+        Set<User> allParticipants = chat.getParticipants();
         Case chatCase = chat.getChatCase();
         String shortMessage = message.substring(0, Math.min(message.length(), 125)).concat("...");
-        participants.stream()
-                .filter(p -> !p.getUsername().equals(sender))
-                .forEach(p -> userNotificationPublisher.publishUserNotification(
-                        "New message from " + sender + " in case " + chatCase.getName(), shortMessage,
-                        p.getUsername()));
+
+        List<String> participants =
+                allParticipants.stream().map((u) -> u.getUsername()).filter(u -> !u.equals(sender)).toList();
+
+        userNotificationPublisher.publishUserNotification(
+                "New message from " + sender + " in case " + chatCase.getName(), shortMessage, participants);
     }
 }

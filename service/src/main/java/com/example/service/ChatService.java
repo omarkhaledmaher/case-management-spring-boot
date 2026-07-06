@@ -64,12 +64,12 @@ public class ChatService {
         return responseDto;
     }
 
-    private void publishChatNotification(List<User> participants, String username, Case chatCase) {
-        participants.stream()
-                .filter(p -> !p.getUsername().equals(username))
-                .forEach(p -> userNotificationPublisher.publishUserNotification(
-                        "New chat created",
-                        "A new chat has been created for case " + chatCase.getDescription(),
-                        p.getUsername()));
+    private void publishChatNotification(List<User> allParticipants, String username, Case chatCase) {
+        List<String> participants =
+                allParticipants.stream().map((u) -> u.getUsername()).filter(u -> !u.equals(username)).toList();
+
+        userNotificationPublisher.publishUserNotification(
+                "New chat created", "A new chat has been created for case " + chatCase.getName(),
+                participants);
     }
 }
