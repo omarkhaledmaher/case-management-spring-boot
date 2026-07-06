@@ -76,7 +76,6 @@ public class CaseService {
 
         List<User> assignedUsers = userRepository.findAllById(dto.assignedUserIds());
         Case savedCase = repository.save(mapper.toCase(dto, assignedUsers, new ArrayList<>()));
-        repository.flush();
         CaseResponseDto responseDto = mapper.toDto(savedCase);
         eventPublisher.publishEvent(DatabaseOperation.CREATED, "Case", "createCase", responseDto);
         publishCaseNotification(assignedUsers, username);

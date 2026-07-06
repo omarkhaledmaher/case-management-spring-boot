@@ -4,12 +4,15 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 import org.hibernate.annotations.BatchSize;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import com.example.common.enums.CaseStatus;
 import com.example.common.enums.CaseType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -19,6 +22,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -28,6 +33,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "cases")
 @Setter
 @Getter
@@ -50,10 +56,12 @@ public class Case {
     @Embedded
     private CaseDetails details;
 
-    @CreationTimestamp
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
-    @UpdateTimestamp
+    @LastModifiedDate
+    @Column(nullable = false)
     private Instant updatedAt;
 
     @Enumerated(EnumType.STRING)
@@ -71,4 +79,15 @@ public class Case {
 
     @OneToMany(mappedBy = "chatCase")
     private Set<Chat> chats = new HashSet<>();
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = Instant.now();
+        this.updatedAt = Instant.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = Instant.now();
+    }
 }

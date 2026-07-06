@@ -44,7 +44,6 @@ public class ChatMessageService {
                 .orElseThrow(() -> new ResourceNotFoundException("Chat with id " + chatId + " not found"));
 
         ChatMessage createdMessage = repository.save(mapper.toChatMessage(dto, user, chat));
-        repository.flush();
         ChatMessageResponseDto responseDto = mapper.toDto(createdMessage);
         eventPublisher.publishEvent(DatabaseOperation.CREATED, "ChatMessage", "createChatMessage", username,
                 responseDto);
