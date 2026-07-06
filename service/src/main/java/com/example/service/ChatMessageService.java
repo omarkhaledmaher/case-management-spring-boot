@@ -49,7 +49,7 @@ public class ChatMessageService {
         eventPublisher.publishEvent(DatabaseOperation.CREATED, "ChatMessage", "createChatMessage", username,
                 responseDto);
 
-        publishChatNotification(chat, username);
+        publishChatNotification(chat, dto.text(), username);
         return responseDto;
     }
 
@@ -71,14 +71,14 @@ public class ChatMessageService {
                 .toList();
     }
 
-    private void publishChatNotification(Chat chat, String username) {
+    private void publishChatNotification(Chat chat, String message, String sender) {
         Set<User> participants = chat.getParticipants();
         Case chatCase = chat.getChatCase();
+        String shortMessage = message.substring(0, Math.min(message.length(), 125)).concat("...");
         participants.stream()
-                .filter(p -> !p.getUsername().equals(username))
+                .filter(p -> !p.getUsername().equals(sender))
                 .forEach(p -> userNotificationPublisher.publishUserNotification(
-                        "New message in chat",
-                        String.format("You have a new message from %s in case %s", username, chatCase.getDescription()),
+                        "New message from " + sender + " in case " + chatCase.getName(), shortMessage,
                         p.getUsername()));
     }
 }
