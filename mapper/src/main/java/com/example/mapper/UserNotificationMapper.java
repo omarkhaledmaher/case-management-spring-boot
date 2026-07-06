@@ -11,7 +11,6 @@ public class UserNotificationMapper {
         UserNotification notification = new UserNotification();
         notification.setTitle(dto.title());
         notification.setMessage(dto.message());
-        notification.setIsRead(dto.isRead());
         notification.setRecipient(dto.recipient());
         return notification;
     }
@@ -20,12 +19,11 @@ public class UserNotificationMapper {
         return new UserNotificationDto(
                 notification.getTitle(),
                 notification.getMessage(),
-                notification.getIsRead(),
                 notification.getRecipient());
     }
 
     public UserNotificationResponseDto toResponseDto(Long id, UserNotificationDto dto) {
-        return new UserNotificationResponseDto(id, dto.title(), dto.message(), dto.isRead());
+        return new UserNotificationResponseDto(id, dto.title(), dto.message(), false);
     }
 
     public UserNotificationResponseDto toResponseDto(UserNotification notification) {
