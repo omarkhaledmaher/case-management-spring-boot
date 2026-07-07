@@ -1,5 +1,6 @@
 package com.example.service;
 
+import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -44,6 +45,8 @@ public class ChatMessageService {
                 .orElseThrow(() -> new ResourceNotFoundException("Chat with id " + chatId + " not found"));
 
         ChatMessage createdMessage = repository.save(mapper.toChatMessage(dto, user, chat));
+        chat.setLastMessageAt(Instant.now());
+
         ChatMessageResponseDto responseDto = mapper.toDto(createdMessage);
         eventPublisher.publishEvent(DatabaseOperation.CREATED, "ChatMessage", "createChatMessage", username,
                 responseDto);

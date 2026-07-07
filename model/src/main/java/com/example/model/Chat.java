@@ -1,5 +1,6 @@
 package com.example.model;
 
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 import org.hibernate.annotations.BatchSize;
@@ -35,6 +36,8 @@ public class Chat {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "case_id")
     private Case chatCase;
+
+    private Instant lastMessageAt;
 
     @ManyToMany
     @BatchSize(size = 10)

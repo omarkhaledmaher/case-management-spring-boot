@@ -1,5 +1,6 @@
 package com.example.mapper;
 
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
 import org.springframework.stereotype.Component;
@@ -15,10 +16,11 @@ import lombok.AllArgsConstructor;
 public class ChatMapper {
     private final UserMapper userMapper;
 
-    public Chat toChat(Case chatCase, List<User> participants) {
+    public Chat toChat(Case chatCase, List<User> participants, Instant lastMessageAt) {
         Chat chat = new Chat();
         chat.setChatCase(chatCase);
         chat.setParticipants(new HashSet<>(participants));
+        chat.setLastMessageAt(lastMessageAt);
         return chat;
     }
 

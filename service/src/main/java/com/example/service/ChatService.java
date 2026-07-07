@@ -1,7 +1,9 @@
 package com.example.service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Set;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.common.dto.ChatResponseDto;
@@ -38,7 +40,9 @@ public class ChatService {
 
     public List<ChatResponseDto> getAllChatsByCaseId(Long caseId) {
         String username = authFacade.getUsername();
-        List<Chat> chats = repository.findByChatCaseIdAndParticipantsUsername(caseId, username);
+        Sort sort = Sort.by(Sort.Direction.DESC, Chat::getLastMessageAt);
+        List<Chat> chats = repository.findByChatCaseIdAndParticipantsUsername(caseId, username, sort);
+
         return chats.stream().map(mapper::toDto).toList();
     }
 
@@ -56,7 +60,7 @@ public class ChatService {
             throw new IllegalArgumentException("One or more participants are not assigned to this case");
         }
 
-        Chat createdChat = repository.save(mapper.toChat(chatCase, participants));
+        Chat createdChat = repository.save(mapper.toChat(chatCase, participants, Instant.now()));
         ChatResponseDto responseDto = mapper.toDto(createdChat);
         eventPublisher.publishEvent(DatabaseOperation.CREATED, "Chat", "createChat", responseDto);
         publishChatNotification(participants, username, chatCase);
