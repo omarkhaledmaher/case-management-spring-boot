@@ -40,6 +40,9 @@ public class ChatService {
 
     public List<ChatResponseDto> getAllChatsByCaseId(Long caseId) {
         String username = authFacade.getUsername();
+        if (!caseRepository.existsByIdAndAssignedUsersUsername(caseId, username)) {
+            throw new ResourceNotFoundException("Case with id " + caseId + " not found");
+        }
         Sort sort = Sort.by(Sort.Direction.DESC, Chat::getLastMessageAt);
         List<Chat> chats = repository.findByChatCaseIdAndParticipantsUsername(caseId, username, sort);
 
