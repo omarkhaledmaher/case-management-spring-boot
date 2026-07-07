@@ -3,6 +3,7 @@ package com.example.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import com.example.common.dto.UserNotificationResponseDto;
 import com.example.common.enums.DatabaseOperation;
@@ -28,7 +29,7 @@ public class UserNotificationService {
     public Page<UserNotificationResponseDto> getAllUserNotifications(Pageable pageable) {
         String username = authFacade.getUsername();
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("User with username " + username + " not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " not found"));
         return repository.findByRecipient(user.getUsername(), pageable).map(mapper::toResponseDto);
     }
 

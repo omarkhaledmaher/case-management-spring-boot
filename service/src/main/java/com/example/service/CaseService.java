@@ -14,6 +14,7 @@ import com.example.common.enums.CaseStatus;
 import com.example.common.enums.CaseType;
 import com.example.common.enums.DatabaseOperation;
 import com.example.common.exceptions.ResourceNotFoundException;
+import com.example.common.exceptions.UnprocessableContentException;
 import com.example.mapper.CaseMapper;
 import com.example.mapper.UserMapper;
 import com.example.model.Case;
@@ -75,6 +76,11 @@ public class CaseService {
         String username = authFacade.getUsername();
 
         List<User> assignedUsers = userRepository.findAllById(dto.assignedUserIds());
+
+        if (assignedUsers.size() < dto.assignedUserIds().size()) {
+            throw new UnprocessableContentException("One or more users not found");
+        }
+
         Case savedCase = repository.save(mapper.toCase(dto, assignedUsers, new ArrayList<>()));
         CaseResponseDto responseDto = mapper.toDto(savedCase);
         eventPublisher.publishEvent(DatabaseOperation.CREATED, "Case", "createCase", responseDto);

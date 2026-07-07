@@ -19,6 +19,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import com.example.common.exceptions.DuplicateRoleException;
 import com.example.common.exceptions.DuplicateUsernameException;
 import com.example.common.exceptions.ResourceNotFoundException;
+import com.example.common.exceptions.UnprocessableContentException;
 import lombok.extern.log4j.Log4j2;
 
 @RestControllerAdvice
@@ -59,6 +60,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleResourceNotFound(ResourceNotFoundException ex) {
         log.info("Resource not found: {}", ex.getMessage());
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(UnprocessableContentException.class)
+    public ResponseEntity<Object> handleUnprocessableContent(UnprocessableContentException ex) {
+        log.info("Failed to process input: {}", ex.getMessage());
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNPROCESSABLE_CONTENT);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

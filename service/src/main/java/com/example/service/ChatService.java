@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.common.dto.ChatResponseDto;
 import com.example.common.enums.DatabaseOperation;
 import com.example.common.exceptions.ResourceNotFoundException;
+import com.example.common.exceptions.UnprocessableContentException;
 import com.example.mapper.ChatMapper;
 import com.example.model.Case;
 import com.example.model.Chat;
@@ -60,7 +61,7 @@ public class ChatService {
 
         Set<User> caseUsers = chatCase.getAssignedUsers();
         if (!caseUsers.containsAll(participants)) {
-            throw new IllegalArgumentException("One or more participants are not assigned to this case");
+            throw new UnprocessableContentException("One or more participants are not assigned to this case");
         }
 
         Chat createdChat = repository.save(mapper.toChat(chatCase, participants, Instant.now()));

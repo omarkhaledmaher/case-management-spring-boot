@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ import com.example.common.dto.UserResponseDto;
 import com.example.common.enums.DatabaseOperation;
 import com.example.common.exceptions.DuplicateUsernameException;
 import com.example.common.exceptions.ResourceNotFoundException;
+import com.example.common.exceptions.UnprocessableContentException;
 import com.example.mapper.UserMapper;
 import com.example.model.Role;
 import com.example.model.User;
@@ -95,7 +97,7 @@ public class UserService {
 
         List<Role> roles = roleRepository.findAllByNameIn(dto.roleNames());
         if (roles.size() != dto.roleNames().size()) {
-            throw new ResourceNotFoundException("One or more roles not found");
+            throw new UnprocessableContentException("One or more roles not found");
         }
         String encodedPassword = passwordEncoder.encode(dto.password());
 
@@ -109,7 +111,7 @@ public class UserService {
     @Transactional
     public UserResponseDto updateUser(Long id, UserRequestDto dto) {
         User user = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("User with id " + id + " not found"));
 
         if (!user.getUsername().equals(dto.username()) && repository.existsByUsername(dto.username())) {
             throw new DuplicateUsernameException("Account with username " + dto.username() + " already exists");
@@ -117,7 +119,7 @@ public class UserService {
 
         Set<Role> roles = new HashSet<>(roleRepository.findAllByNameIn(dto.roleNames()));
         if (roles.size() != dto.roleNames().size()) {
-            throw new ResourceNotFoundException("One or more roles not found");
+            throw new UnprocessableContentException("One or more roles not found");
         }
 
         user.setUsername(dto.username());
@@ -132,7 +134,7 @@ public class UserService {
     @Transactional
     public void deleteUser(Long id) {
         User user = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User with id " + id + " not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("User with id " + id + " not found"));
         UserResponseDto dto = mapper.toDto(user);
         eventPublisher.publishEvent(DatabaseOperation.DELETED, "User", "deleteUser", dto);
         repository.deleteById(id);
