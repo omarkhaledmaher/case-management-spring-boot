@@ -1,5 +1,6 @@
 package com.example.web.controller;
 
+import java.time.Instant;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,8 +48,9 @@ public class EventController {
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<EventResponseDto>> getAllEvents(@RequestParam(required = false) String searchTerm,
+            @RequestParam(required = false) Instant minTime, @RequestParam(required = false) Instant maxTime,
             @ParameterObject Pageable pageable) {
-        return ResponseEntity.ok(eventService.getAllEvents(searchTerm, pageable));
+        return ResponseEntity.ok(eventService.getAllEvents(searchTerm, minTime, maxTime, pageable));
     }
 
 }

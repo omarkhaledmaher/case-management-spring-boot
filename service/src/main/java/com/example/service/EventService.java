@@ -1,5 +1,6 @@
 package com.example.service;
 
+import java.time.Instant;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -24,9 +25,15 @@ public class EventService {
         return mapper.toDto(event);
     }
 
-    public Page<EventResponseDto> getAllEvents(String searchTerm, Pageable pageable) {
+    public Page<EventResponseDto> getAllEvents(String searchTerm, Instant minTime, Instant maxTime, Pageable pageable) {
         Specification<Event> spec = Specification.unrestricted();
         spec = EventSpecification.hasSearchTerm(searchTerm);
+        if (minTime != null) {
+            spec = EventSpecification.isAfter(minTime);
+        }
+        if (maxTime != null) {
+            spec = EventSpecification.isBefore(maxTime);
+        }
 
         return eventRepository.findAll(spec, pageable).map(mapper::toDto);
     }

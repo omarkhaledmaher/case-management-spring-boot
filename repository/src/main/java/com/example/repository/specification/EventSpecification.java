@@ -1,5 +1,6 @@
 package com.example.repository.specification;
 
+import java.time.Instant;
 import org.springframework.data.jpa.domain.Specification;
 import com.example.model.Event;
 import jakarta.persistence.criteria.Predicate;
@@ -12,6 +13,18 @@ public class EventSpecification {
             Predicate usernameLike = cb.like(cb.lower(root.get("username")), comparisonString);
 
             return cb.or(entityNameLike, usernameLike);
+        };
+    }
+
+    public static Specification<Event> isAfter(Instant timestamp) {
+        return (root, query, cb) -> {
+            return cb.greaterThanOrEqualTo(root.get("timestamp"), timestamp);
+        };
+    }
+
+    public static Specification<Event> isBefore(Instant timestamp) {
+        return (root, query, cb) -> {
+            return cb.lessThanOrEqualTo(root.get("timestamp"), timestamp);
         };
     }
 }
