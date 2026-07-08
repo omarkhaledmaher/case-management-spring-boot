@@ -1,6 +1,7 @@
 package com.example.web.controller;
 
 import java.net.URI;
+import java.util.List;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -58,9 +59,10 @@ public class CaseController {
     @GetMapping
     @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and hasAuthority('CASE_READ'))")
     public ResponseEntity<Page<CaseResponseDto>> getAllCases(@RequestParam(required = false) String searchTerm,
-            @RequestParam(required = false) CaseType type, @RequestParam(required = false) CaseStatus status,
+            @RequestParam(required = false) List<CaseType> types,
+            @RequestParam(required = false) List<CaseStatus> statuses,
             @ParameterObject Pageable pageable) {
-        return ResponseEntity.ok(caseService.getCases(searchTerm, type, status, pageable));
+        return ResponseEntity.ok(caseService.getCases(searchTerm, types, statuses, pageable));
     }
 
 

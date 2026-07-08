@@ -44,18 +44,19 @@ public class CaseService {
         return mapper.toDto(caseEntity);
     }
 
-    public Page<CaseResponseDto> getCases(String searchTerm, CaseType type, CaseStatus status, Pageable pageable) {
+    public Page<CaseResponseDto> getCases(String searchTerm, List<CaseType> types, List<CaseStatus> statuses,
+            Pageable pageable) {
         String username = authFacade.getUsername();
         Specification<Case> spec = CaseSpecification.hasUser(username);
 
         if (searchTerm != null && !searchTerm.isBlank()) {
             spec = spec.and(CaseSpecification.hasSearchTerm(searchTerm));
         }
-        if (type != null) {
-            spec = spec.and(CaseSpecification.hasType(type));
+        if (types != null && !types.isEmpty()) {
+            spec = spec.and(CaseSpecification.hasAnyType(types));
         }
-        if (status != null) {
-            spec = spec.and(CaseSpecification.hasStatus(status));
+        if (statuses != null && !statuses.isEmpty()) {
+            spec = spec.and(CaseSpecification.hasAnyStatus(statuses));
         }
 
         Page<Case> cases = repository.findAll(spec, pageable);

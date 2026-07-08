@@ -1,5 +1,6 @@
 package com.example.repository.specification;
 
+import java.util.List;
 import org.springframework.data.jpa.domain.Specification;
 import com.example.common.enums.CaseStatus;
 import com.example.common.enums.CaseType;
@@ -31,9 +32,37 @@ public class CaseSpecification {
         };
     }
 
+    public static Specification<Case> hasAnyType(List<CaseType> types) {
+        return (root, query, cb) -> {
+            if (types.isEmpty()) {
+                return cb.conjunction();
+            }
+            Predicate predicate = cb.equal(root.get("type"), types.getFirst());
+            for (int i = 1; i < types.size(); i++) {
+                Predicate condition = cb.equal(root.get("type"), types.get(i));
+                predicate = cb.or(predicate, condition);
+            }
+            return predicate;
+        };
+    }
+
     public static Specification<Case> hasStatus(CaseStatus status) {
         return (root, query, cb) -> {
             return cb.equal(root.get("status"), status);
+        };
+    }
+
+    public static Specification<Case> hasAnyStatus(List<CaseStatus> statuses) {
+        return (root, query, cb) -> {
+            if (statuses.isEmpty()) {
+                return cb.conjunction();
+            }
+            Predicate predicate = cb.equal(root.get("status"), statuses.getFirst());
+            for (int i = 1; i < statuses.size(); i++) {
+                Predicate condition = cb.equal(root.get("status"), statuses.get(i));
+                predicate = cb.or(predicate, condition);
+            }
+            return predicate;
         };
     }
 }
