@@ -3,6 +3,7 @@ package com.example.service;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -133,9 +134,11 @@ public class UserService {
 
     @Transactional
     public void deleteUser(Long id) {
-        User user = repository.findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException("User with id " + id + " not found"));
-        UserResponseDto dto = mapper.toDto(user);
+        Optional<User> user = repository.findById(id);
+        if (user.isEmpty()) {
+            return;
+        }
+        UserResponseDto dto = mapper.toDto(user.get());
         eventPublisher.publishEvent(DatabaseOperation.DELETED, "User", "deleteUser", dto);
         repository.deleteById(id);
     }

@@ -1,5 +1,6 @@
 package com.example.service;
 
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authorization.AuthorizationDeniedException;
@@ -7,7 +8,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import com.example.common.dto.UserNotificationResponseDto;
 import com.example.common.enums.DatabaseOperation;
-import com.example.common.exceptions.ResourceNotFoundException;
 import com.example.mapper.UserNotificationMapper;
 import com.example.model.User;
 import com.example.model.UserNotification;
@@ -45,15 +45,18 @@ public class UserNotificationService {
     }
 
     public void deleteNotification(Long id) {
-        UserNotification notification = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Notification with id " + id + " not found"));
+        Optional<UserNotification> notification = repository.findById(id);
+
+        if (notification.isEmpty()) {
+            return;
+        }
 
         String username = authFacade.getUsername();
-        if (!notification.getRecipient().equals(username)) {
+        if (!notification.get().getRecipient().equals(username)) {
             throw new AuthorizationDeniedException("No access to notification with id " + id);
         }
 
-        UserNotificationResponseDto dto = mapper.toResponseDto(notification);
+        UserNotificationResponseDto dto = mapper.toResponseDto(notification.get());
         eventPublisher.publishEvent(DatabaseOperation.DELETED, "UserNotification", "deleteUserNotification", dto);
 
         repository.deleteById(id);
