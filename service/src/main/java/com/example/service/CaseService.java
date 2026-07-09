@@ -2,7 +2,11 @@ package com.example.service;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.opentmf.commons.patch.JsonMergePatch;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -25,6 +29,8 @@ import com.example.repository.UserRepository;
 import com.example.repository.specification.CaseSpecification;
 import com.example.security.IAuthFacade;
 import lombok.AllArgsConstructor;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 @Service
 @AllArgsConstructor
@@ -36,6 +42,7 @@ public class CaseService {
     private final EventPublisher eventPublisher;
     private final UserNotificationPublisher userNotificationPublisher;
     private final IAuthFacade authFacade;
+    private final ObjectMapper objectMapper;
 
     public CaseResponseDto getCaseById(Long id) {
         String username = authFacade.getUsername();
@@ -128,5 +135,47 @@ public class CaseService {
         }
 
         return repository.count(spec);
+    }
+
+    @Transactional
+    public CaseResponseDto partiallyUpdateCase(Long id, JsonNode patchNode) {
+        Case existingCase = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Case with id " + id + " not found"));
+
+        Set<String> originalUsernames = existingCase.getAssignedUsers().stream()
+                .map(User::getUsername)
+                .collect(Collectors.toSet());
+
+        CaseRequestDto existingDto = mapper.toRequestDto(existingCase);
+        JsonNode targetNode = objectMapper.valueToTree(existingDto);
+        JsonMergePatch mergePatch = JsonMergePatch.of(patchNode);
+        JsonNode patchedNode = mergePatch.apply(targetNode);
+        CaseRequestDto patchedCaseDto = objectMapper.treeToValue(patchedNode, CaseRequestDto.class);
+
+        Set<Long> uniqueRequestedUserIds = new HashSet<>(patchedCaseDto.assignedUserIds());
+        List<User> assignedUsers = userRepository.findAllById(uniqueRequestedUserIds);
+
+        if (assignedUsers.size() < uniqueRequestedUserIds.size()) {
+            throw new UnprocessableContentException("One or more users not found");
+        }
+
+        mapper.updateCaseFromDto(existingCase, patchedCaseDto, assignedUsers);
+
+        List<String> newlyAssignedUsernames = assignedUsers.stream()
+                .map(User::getUsername)
+                .filter(username -> !originalUsernames.contains(username))
+                .toList();
+
+        if (!newlyAssignedUsernames.isEmpty()) {
+            userNotificationPublisher.publishUserNotification(
+                    "New case assigned",
+                    "You have been assigned to " + existingCase.getName(),
+                    newlyAssignedUsernames);
+        }
+
+        CaseResponseDto responseDto = mapper.toDto(existingCase);
+        eventPublisher.publishEvent(DatabaseOperation.UPDATED, "Case", "partiallyUpdateCase", responseDto);
+
+        return responseDto;
     }
 }

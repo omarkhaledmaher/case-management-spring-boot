@@ -16,6 +16,14 @@ import lombok.AllArgsConstructor;
 @Component
 @AllArgsConstructor
 public class CaseMapper {
+
+    public CaseRequestDto toRequestDto(Case caseEntity) {
+        return new CaseRequestDto(caseEntity.getName(), caseEntity.getType(),
+                caseEntity.getDescription(),
+                toCaseDetailsDto(caseEntity.getDetails()),
+                caseEntity.getAssignedUsers().stream().map(User::getId).toList());
+    }
+
     public CaseResponseDto toDto(Case caseEntity) {
         return new CaseResponseDto(caseEntity.getId(), caseEntity.getName(), caseEntity.getType(),
                 caseEntity.getDescription(),
@@ -43,5 +51,13 @@ public class CaseMapper {
     private CaseDetailsDto toCaseDetailsDto(CaseDetails details) {
         return new CaseDetailsDto(details.getCustomerName(), details.getApplicantName(),
                 details.getReferenceName());
+    }
+
+    public void updateCaseFromDto(Case existingCase, CaseRequestDto patchedCaseDto, List<User> assignedUsers) {
+        existingCase.setName(patchedCaseDto.name());
+        existingCase.setType(patchedCaseDto.type());
+        existingCase.setDescription(patchedCaseDto.description());
+        existingCase.setDetails(toCaseDetails(patchedCaseDto.details()));
+        existingCase.setAssignedUsers(new HashSet<>(assignedUsers));
     }
 }

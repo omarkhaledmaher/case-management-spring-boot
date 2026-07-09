@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +29,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import tools.jackson.databind.JsonNode;
 
 @RestController
 @RequestMapping("/api/cases")
@@ -113,5 +115,20 @@ public class CaseController {
         CaseResponseDto createdCase = caseService.createCase(dto);
         URI location = ucb.path("/api/cases/{id}").buildAndExpand(createdCase.id()).toUri();
         return ResponseEntity.created(location).body(createdCase);
+    }
+
+    @Operation(summary = "Partially updates a case", description = "Requires CASE_CREATE authority")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Case successfully updated"),
+            @ApiResponse(responseCode = "400", description = "Invalid request body"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated session"),
+            @ApiResponse(responseCode = "403", description = "Missing CASE_CREATE authority or no access to case"),
+            @ApiResponse(responseCode = "404", description = "Case with specified ID not found")
+    })
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and hasAuthority('CASE_CREATE'))")
+    @PatchMapping(value = "/{id}", consumes = "application/json-patch+json")
+    public ResponseEntity<CaseResponseDto> updateCase(@PathVariable Long id, @RequestBody JsonNode patchNode) {
+        CaseResponseDto updatedCase = caseService.partiallyUpdateCase(id, patchNode);
+        return ResponseEntity.ok(updatedCase);
     }
 }
