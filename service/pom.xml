@@ -31,6 +31,11 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.opentmf.commons</groupId>
+			<artifactId>opentmf-json-patch</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-activemq</artifactId>
 		</dependency>
