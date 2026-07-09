@@ -2,6 +2,7 @@ package com.example.web;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.opentmf.commons.patch.JsonPatchException;
 import org.springframework.core.convert.ConversionFailedException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -89,6 +90,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<ErrorResponseDto>(
                 mapper.toDto(ex, HttpStatus.UNPROCESSABLE_CONTENT.value(), request.getRequestURI()),
                 HttpStatus.UNPROCESSABLE_CONTENT);
+    }
+
+    @ExceptionHandler(JsonPatchException.class)
+    public ResponseEntity<ErrorResponseDto> handleJsonPatch(JsonPatchException ex,
+            HttpServletRequest request) {
+        log.info("JSON Patch Failed: {}", ex.getMessage());
+        return new ResponseEntity<ErrorResponseDto>(
+                mapper.toDto(ex, HttpStatus.BAD_REQUEST.value(), request.getRequestURI()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
