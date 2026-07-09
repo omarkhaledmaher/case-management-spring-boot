@@ -131,4 +131,21 @@ public class CaseController {
         CaseResponseDto updatedCase = caseService.partiallyUpdateCase(id, patchNode);
         return ResponseEntity.ok(updatedCase);
     }
+
+    @Operation(summary = "Updates case assigned members", description = "Requires CASE_CREATE authority")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Case successfully updated"),
+            @ApiResponse(responseCode = "400", description = "Invalid request body"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated session"),
+            @ApiResponse(responseCode = "403", description = "Missing CASE_CREATE authority or no access to case"),
+            @ApiResponse(responseCode = "404", description = "Case with specified ID not found"),
+            @ApiResponse(responseCode = "422", description = "One or more users not found")
+    })
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and hasAuthority('CASE_CREATE'))")
+    @PatchMapping(value = "/{id}/users", consumes = "application/json-patch+json")
+    public ResponseEntity<CaseResponseDto> updateCaseUsers(@PathVariable Long id,
+            @RequestBody List<Long> assignedUserIds) {
+        CaseResponseDto updatedCase = caseService.updateCaseUsers(id, assignedUserIds);
+        return ResponseEntity.ok(updatedCase);
+    }
 }

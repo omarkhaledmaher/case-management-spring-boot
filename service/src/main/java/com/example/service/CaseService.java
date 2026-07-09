@@ -2,16 +2,15 @@ package com.example.service;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.opentmf.commons.patch.JsonMergePatch;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.example.common.dto.CasePatchDto;
 import com.example.common.dto.CaseRequestDto;
 import com.example.common.dto.CaseResponseDto;
 import com.example.common.dto.ChatParticipantResponseDto;
@@ -142,40 +141,44 @@ public class CaseService {
         Case existingCase = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Case with id " + id + " not found"));
 
-        Set<String> originalUsernames = existingCase.getAssignedUsers().stream()
-                .map(User::getUsername)
-                .collect(Collectors.toSet());
-
-        CaseRequestDto existingDto = mapper.toRequestDto(existingCase);
+        CasePatchDto existingDto = mapper.toPatchDto(existingCase);
         JsonNode targetNode = objectMapper.valueToTree(existingDto);
         JsonMergePatch mergePatch = JsonMergePatch.of(patchNode);
         JsonNode patchedNode = mergePatch.apply(targetNode);
-        CaseRequestDto patchedCaseDto = objectMapper.treeToValue(patchedNode, CaseRequestDto.class);
+        CasePatchDto patchedCaseDto = objectMapper.treeToValue(patchedNode, CasePatchDto.class);
 
-        Set<Long> uniqueRequestedUserIds = new HashSet<>(patchedCaseDto.assignedUserIds());
-        List<User> assignedUsers = userRepository.findAllById(uniqueRequestedUserIds);
-
-        if (assignedUsers.size() < uniqueRequestedUserIds.size()) {
-            throw new UnprocessableContentException("One or more users not found");
-        }
-
-        mapper.updateCaseFromDto(existingCase, patchedCaseDto, assignedUsers);
-
-        List<String> newlyAssignedUsernames = assignedUsers.stream()
-                .map(User::getUsername)
-                .filter(username -> !originalUsernames.contains(username))
-                .toList();
-
-        if (!newlyAssignedUsernames.isEmpty()) {
-            userNotificationPublisher.publishUserNotification(
-                    "New case assigned",
-                    "You have been assigned to " + existingCase.getName(),
-                    newlyAssignedUsernames);
-        }
+        mapper.updateCaseFromDto(existingCase, patchedCaseDto);
 
         CaseResponseDto responseDto = mapper.toDto(existingCase);
         eventPublisher.publishEvent(DatabaseOperation.UPDATED, "Case", "partiallyUpdateCase", responseDto);
 
+        return responseDto;
+    }
+
+    public CaseResponseDto updateCaseUsers(Long id, List<Long> assignedUserIds) {
+        String username = authFacade.getUsername();
+        Case existingCase = repository.findByIdAndAssignedUsersUsername(id, username)
+                .orElseThrow(() -> new ResourceNotFoundException("Case with id " + id + " not found"));
+
+        List<User> assignedUsers = userRepository.findAllById(assignedUserIds);
+        if (assignedUsers.size() < assignedUserIds.size()) {
+            throw new UnprocessableContentException("One or more users not found");
+        }
+
+        List<String> oldUsernames = existingCase.getAssignedUsers().stream().map(User::getUsername).toList();
+        List<String> newUsernames = assignedUsers.stream().map(User::getUsername).toList();
+        List<String> addedUsernames = newUsernames.stream().filter(u -> !oldUsernames.contains(u)).toList();
+        List<String> removedUsernames = oldUsernames.stream().filter(u -> !newUsernames.contains(u)).toList();
+
+        userNotificationPublisher.publishUserNotification("Case assignment updated",
+                "You have been assigned to case: " + existingCase.getName(), addedUsernames);
+        userNotificationPublisher.publishUserNotification("Case assignment updated",
+                "You have been unassigned from case: " + existingCase.getName(), removedUsernames);
+
+        existingCase.setAssignedUsers(Set.copyOf(assignedUsers));
+
+        CaseResponseDto responseDto = mapper.toDto(existingCase);
+        eventPublisher.publishEvent(DatabaseOperation.UPDATED, "Case", "partiallyUpdateCase", responseDto);
         return responseDto;
     }
 }

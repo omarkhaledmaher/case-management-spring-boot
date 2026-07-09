@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.List;
 import org.springframework.stereotype.Component;
 import com.example.common.dto.CaseDetailsDto;
+import com.example.common.dto.CasePatchDto;
 import com.example.common.dto.CaseRequestDto;
 import com.example.common.dto.CaseResponseDto;
 import com.example.common.enums.CaseStatus;
@@ -17,11 +18,9 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class CaseMapper {
 
-    public CaseRequestDto toRequestDto(Case caseEntity) {
-        return new CaseRequestDto(caseEntity.getName(), caseEntity.getType(),
-                caseEntity.getDescription(),
-                toCaseDetailsDto(caseEntity.getDetails()),
-                caseEntity.getAssignedUsers().stream().map(User::getId).toList());
+    public CasePatchDto toPatchDto(Case caseEntity) {
+        return new CasePatchDto(caseEntity.getName(), caseEntity.getType(), caseEntity.getDescription(),
+                this.toCaseDetailsDto(caseEntity.getDetails()), caseEntity.getStatus());
     }
 
     public CaseResponseDto toDto(Case caseEntity) {
@@ -53,11 +52,11 @@ public class CaseMapper {
                 details.getReferenceName());
     }
 
-    public void updateCaseFromDto(Case existingCase, CaseRequestDto patchedCaseDto, List<User> assignedUsers) {
-        existingCase.setName(patchedCaseDto.name());
-        existingCase.setType(patchedCaseDto.type());
-        existingCase.setDescription(patchedCaseDto.description());
-        existingCase.setDetails(toCaseDetails(patchedCaseDto.details()));
-        existingCase.setAssignedUsers(new HashSet<>(assignedUsers));
+    public void updateCaseFromDto(Case existingCase, CasePatchDto dto) {
+        existingCase.setName(dto.name());
+        existingCase.setType(dto.type());
+        existingCase.setDescription(dto.description());
+        existingCase.setDetails(toCaseDetails(dto.details()));
+        existingCase.setStatus(dto.status());
     }
 }
