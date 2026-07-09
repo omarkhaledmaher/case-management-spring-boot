@@ -1,5 +1,6 @@
 package com.example.repository.specification;
 
+import java.time.Instant;
 import java.util.List;
 import org.springframework.data.jpa.domain.Specification;
 import com.example.common.enums.CaseStatus;
@@ -63,6 +64,18 @@ public class CaseSpecification {
                 predicate = cb.or(predicate, condition);
             }
             return predicate;
+        };
+    }
+
+    public static Specification<Case> isCreatedAfter(Instant timestamp) {
+        return (root, query, cb) -> {
+            return cb.greaterThanOrEqualTo(root.get("createdAt"), timestamp);
+        };
+    }
+
+    public static Specification<Case> isCreatedBefore(Instant timestamp) {
+        return (root, query, cb) -> {
+            return cb.lessThanOrEqualTo(root.get("createdAt"), timestamp);
         };
     }
 }

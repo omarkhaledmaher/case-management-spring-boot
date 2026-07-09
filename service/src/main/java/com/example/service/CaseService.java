@@ -1,5 +1,6 @@
 package com.example.service;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.domain.Page;
@@ -45,7 +46,7 @@ public class CaseService {
     }
 
     public Page<CaseResponseDto> getCases(String searchTerm, List<CaseType> types, List<CaseStatus> statuses,
-            Pageable pageable) {
+            Instant minCreatedAt, Instant maxCreatedAt, Pageable pageable) {
         String username = authFacade.getUsername();
         Specification<Case> spec = CaseSpecification.hasUser(username);
 
@@ -57,6 +58,12 @@ public class CaseService {
         }
         if (statuses != null && !statuses.isEmpty()) {
             spec = spec.and(CaseSpecification.hasAnyStatus(statuses));
+        }
+        if (minCreatedAt != null) {
+            spec = spec.and(CaseSpecification.isCreatedAfter(minCreatedAt));
+        }
+        if (maxCreatedAt != null) {
+            spec = spec.and(CaseSpecification.isCreatedBefore(maxCreatedAt));
         }
 
         Page<Case> cases = repository.findAll(spec, pageable);

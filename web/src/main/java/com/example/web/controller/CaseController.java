@@ -1,6 +1,7 @@
 package com.example.web.controller;
 
 import java.net.URI;
+import java.time.Instant;
 import java.util.List;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -61,8 +62,10 @@ public class CaseController {
     public ResponseEntity<Page<CaseResponseDto>> getAllCases(@RequestParam(required = false) String searchTerm,
             @RequestParam(required = false) List<CaseType> types,
             @RequestParam(required = false) List<CaseStatus> statuses,
+            @RequestParam(required = false) Instant minCreatedAt, @RequestParam(required = false) Instant maxCreatedAt,
             @ParameterObject Pageable pageable) {
-        return ResponseEntity.ok(caseService.getCases(searchTerm, types, statuses, pageable));
+        return ResponseEntity
+                .ok(caseService.getCases(searchTerm, types, statuses, minCreatedAt, maxCreatedAt, pageable));
     }
 
 
