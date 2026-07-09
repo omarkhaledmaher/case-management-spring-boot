@@ -27,7 +27,9 @@ public class EventService {
 
     public Page<EventResponseDto> getAllEvents(String searchTerm, Instant minTime, Instant maxTime, Pageable pageable) {
         Specification<Event> spec = Specification.unrestricted();
-        spec = EventSpecification.hasSearchTerm(searchTerm);
+        if (searchTerm != null && !searchTerm.isBlank()) {
+            spec = spec.and(EventSpecification.hasSearchTerm(searchTerm));
+        }
         if (minTime != null) {
             spec = EventSpecification.isAfter(minTime);
         }
