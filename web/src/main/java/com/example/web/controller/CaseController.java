@@ -68,6 +68,21 @@ public class CaseController {
                 .ok(caseService.getCases(searchTerm, types, statuses, minCreatedAt, maxCreatedAt, pageable));
     }
 
+    @Operation(summary = "Gets number of cases",
+            description = "Returns all cases the user has access to, with optional search term for filtering")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Cases retrieved successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthenticated session"),
+            @ApiResponse(responseCode = "403", description = "Missing CASE_READ authority")})
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('USER') and hasAuthority('CASE_READ'))")
+    @GetMapping("/count")
+    public ResponseEntity<Long> getCaseCount(@RequestParam(required = false) String searchTerm,
+            @RequestParam(required = false) List<CaseType> types,
+            @RequestParam(required = false) List<CaseStatus> statuses,
+            @RequestParam(required = false) Instant minCreatedAt,
+            @RequestParam(required = false) Instant maxCreatedAt) {
+        return ResponseEntity.ok(caseService.getCaseCount(searchTerm, types, statuses, minCreatedAt, maxCreatedAt));
+    }
 
     @Operation(summary = "Gets all users assigned to a case")
     @ApiResponses({

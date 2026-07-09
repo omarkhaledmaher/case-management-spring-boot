@@ -105,4 +105,28 @@ public class CaseService {
                 .publishUserNotification("New case assigned", "You have been assigned to " + caseName, recipients);
 
     }
+
+    public Long getCaseCount(String searchTerm, List<CaseType> types, List<CaseStatus> statuses,
+            Instant minCreatedAt, Instant maxCreatedAt) {
+        String username = authFacade.getUsername();
+        Specification<Case> spec = CaseSpecification.hasUser(username);
+
+        if (searchTerm != null && !searchTerm.isBlank()) {
+            spec = spec.and(CaseSpecification.hasSearchTerm(searchTerm));
+        }
+        if (types != null && !types.isEmpty()) {
+            spec = spec.and(CaseSpecification.hasAnyType(types));
+        }
+        if (statuses != null && !statuses.isEmpty()) {
+            spec = spec.and(CaseSpecification.hasAnyStatus(statuses));
+        }
+        if (minCreatedAt != null) {
+            spec = spec.and(CaseSpecification.isCreatedAfter(minCreatedAt));
+        }
+        if (maxCreatedAt != null) {
+            spec = spec.and(CaseSpecification.isCreatedBefore(maxCreatedAt));
+        }
+
+        return repository.count(spec);
+    }
 }
